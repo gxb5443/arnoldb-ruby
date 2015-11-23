@@ -1,0 +1,3 @@
+[submodule "lib/arnoldb/proto/arnoldb-protofiles"]
+	path = lib/arnoldb/proto/arnoldb-protofiles
+  url = https://github.com/namely/arnoldb-protofiles.git
