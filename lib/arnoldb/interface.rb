@@ -117,6 +117,39 @@ module Arnoldb
       fields
     end
 
+    # Gets Values from Arnoldb which match the given Object Type ID, Object IDs,
+    # and Field IDs.
+    # @param [String] object_type_id the Arnoldb ID for the Table
+    # @param [Array<String>] object_ids the Arnoldb IDs for the desired Objects
+    # @param [Array<String>] field_ids the Arnoldb IDS for the desired Fields
+    # @param [DateTime] date the date for what version of the Values being
+    # queried
+    # @return [Array<Hash>] Values for the desired Objects and Fields
+    def self.get_values(object_type_id, object_ids, field_ids, date)
+      p "getting values"
+
+      objects = []
+      object_ids.each do |object_id|
+        objects << Proto::Object.new(id: object_id)
+      end
+
+      fields = []
+      field_ids.each do |field_id|
+        fields << Proto::Field.new(id: field_id)
+      end
+
+      values = Proto::Values.new(
+        object_type_id: object_type_id,
+        object_ids: objects,
+        fields: fields,
+        date: date.to_i
+      )
+      response = connection.get_values(values)
+      values = response.values
+
+      values
+    end
+
     # Gets Objects from Arnoldb which match specific Query Clauses for a given
     # date.
     # @param [String] object_type_id the Arnoldb ID for the Table
