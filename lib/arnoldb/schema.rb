@@ -56,12 +56,23 @@ module Arnoldb
     # cache, if no matches are found Arnoldb tries to find a match
     #
     # @todo MAYBE CHANGE it to (title, table, column=nil)
-    def self.get_id(type, title)
+    def self.get_id(type, title, retry: true)
+      result = nil
+
       if type == "column"
-        @@fields[title]
+        result = @@fields[title]
       else
-        @@object_types[title]
+        result = @@object_types[title]
       end
+
+      if result.nil? && retry
+        # REBUILD THE CACHE FROM ARNOLDB
+        self.build
+        # RETRY get_id CALL
+        result = self.get_id(type, title, retry: false)
+      end
+
+      result
     end
 
     # Get a title of a Table or Column from an Arnoldb_id. This searches
