@@ -30,13 +30,15 @@ module Arnoldb
 
     # Creates an Object in Arnoldb
     # @param [String] object_type_id the Table's Arnoldb ID
+    # @param [String] object_id the Object's Arnoldb ID used for setting during
+    # migrations
     # @return [String] returns the associated Arnoldb ID for the created Object
     #
     # @todo CHANGE NAMING TO TABLE AND COLUMN
-    def self.create_object(object_type_id)
+    def self.create_object(object_type_id, object_id = "")
       begin_time = Time.now
       begin
-        response = connection.set_object(Proto::Object.new(object_type_id: object_type_id))["id"]
+        response = connection.set_object(Proto::Object.new(object_type_id: object_type_id, id: object_id))["id"]
       rescue Exception => e
         puts "ARNOLDB:CreateObject WARNING: ".yellow + "#{ e }"
 
