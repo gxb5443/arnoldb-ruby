@@ -1,0 +1,12 @@
+FROM grpc/ruby:0.11
+
+RUN mkdir -p /arnoldb_gem/lib
+WORKDIR /arnoldb_gem
+
+COPY lib/. /arnoldb_gem/lib/
+COPY Gemfile /arnoldb_gem/
+COPY Gemfile.lock /arnoldb_gem/
+COPY arnoldb.gemspec /arnoldb_gem/
+
+RUN bundle install
+

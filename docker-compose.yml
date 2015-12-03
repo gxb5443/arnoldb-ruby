@@ -1,0 +1,29 @@
+db_arnoldb:
+  image: postgres:9.4
+  environment:
+    POSTGRES_DB: arnold
+
+arnoldb:
+  image: registry.namely.tech/namely/arnoldb:c77f3de7
+  ports:
+    - "8080"
+  environment:
+    PG_USER: postgres
+    PG_HOST: db_arnoldb
+    PG_DBNAME: arnold
+    STORAGE_ENGINE: postgres
+  links:
+    - db_arnoldb
+
+test:
+  build: .
+  dockerfile: Dockerfile-dev
+  command: bash -c "bundle exec rspec"
+  working_dir: /arnoldb_gem
+  volumes: 
+    - .:/arnoldb_gem
+  environment:
+    ARNOLDB_ADDR: arnoldb
+    ARNOLDB_PORT: 8080
+  links:
+    - arnoldb
