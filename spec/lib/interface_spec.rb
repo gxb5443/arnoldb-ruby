@@ -129,6 +129,18 @@ describe Arnoldb::Interface do
         object_type_id: @object_type_id,
         field_id: @field_string,
         value: "John Kimble"
+      },
+      {
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "30"
+      },
+      {
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "0.5"
       }]
     end
     let(:current_values) do
@@ -136,9 +148,14 @@ describe Arnoldb::Interface do
     end
 
     it 'creates current values in arnoldb' do
+      expected = []
+      values.each do |value|
+        expected << { id: value[:object_id], value: value[:value] }
+      end
+
       expect(current_values).not_to eq(nil)
       expect(current_values).not_to eq("")
-      expect(current_values).to eq([object])
+      expect(current_values).to match_array(expected)
     end
   end
 
