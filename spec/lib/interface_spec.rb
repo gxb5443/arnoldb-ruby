@@ -314,11 +314,16 @@ describe Arnoldb::Interface do
         { id: @field_float, title: "modifier", value_type: :FLOAT32 }
       ]
     end
+    let(:bad_obj_type_id) { Arnoldb::Interface.get_fields("") }
 
     it 'gets fields from arnoldb' do
       result = Arnoldb::Interface.get_fields(@object_type_id)
 
       expect(result).to match_array(fields)
+    end
+
+    it 'raises an error if bad object_type_id' do
+      expect { bad_obj_type_id }.to raise_error(/Not a valid uuid/)
     end
   end
 
