@@ -96,8 +96,6 @@ describe Arnoldb::Interface do
     end
 
     it 'creates an object in arnoldb with matching id' do
-      expect(object_with_id).not_to eq(nil)
-      expect(object_with_id).not_to eq("")
       expect(object_with_id).to eq("b6785476-146d-43a4-a217-23e186ee7fd3")
     end
 
@@ -123,7 +121,7 @@ describe Arnoldb::Interface do
     end
 
     let(:object) { Arnoldb::Interface.create_object(@object_type_id) }
-    let(:values) do
+    let(:value_set1) do
       [{
         object_id: object,
         object_type_id: @object_type_id,
@@ -143,19 +141,81 @@ describe Arnoldb::Interface do
         value: "0.5"
       }]
     end
+    let(:value_set2) do
+      [{
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "old John Kimble"
+      },
+      {
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "3000"
+      },
+      {
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "9.81"
+      }]
+    end
+    let(:value_set3) do
+      [{
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "terminator"
+      },
+      {
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "-2000"
+      },
+      {
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "3.14"
+      }]
+    end
     let(:current_values) do
-      Arnoldb::Interface.create_values(values)
+      Arnoldb::Interface.create_values(value_set1)
+    end
+    let(:past_values) do
+      Arnoldb::Interface.create_values(value_set2, Time.new(2010, 10, 10).to_i)
+    end
+    let(:future_values) do
+      Arnoldb::Interface.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
     end
 
     it 'creates current values in arnoldb' do
       expected = []
-      values.each do |value|
+      value_set1.each do |value|
         expected << { id: value[:object_id], value: value[:value] }
       end
 
-      expect(current_values).not_to eq(nil)
-      expect(current_values).not_to eq("")
       expect(current_values).to match_array(expected)
+    end
+
+    it 'creates past values in arnoldb' do
+      expected = []
+      value_set2.each do |value|
+        expected << { id: value[:object_id], value: value[:value] }
+      end
+
+      expect(past_values).to match_array(expected)
+    end
+
+    it 'creates future values in arnoldb' do
+      expected = []
+      value_set3.each do |value|
+        expected << { id: value[:object_id], value: value[:value] }
+      end
+
+      expect(future_values).to match_array(expected)
     end
   end
 
