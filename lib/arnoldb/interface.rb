@@ -67,9 +67,9 @@ module Arnoldb
       objects
     end
 
-    # Gets the Arnoldb ID of specific Table
-    # @param [String] title the title of the Table
-    # @return [String, nil] the Arnoldb ID for the Table if found
+    # Gets the Arnoldb ID of specific Object Type
+    # @param [String] title the title of the Object Type
+    # @return [String, nil] the Arnoldb ID for the Object Type if found
     #
     # @todo finish ARNOLDB to allow for titles to be sent
     def self.get_object_type(title)
@@ -77,11 +77,11 @@ module Arnoldb
       connection.get_object_type(Proto::ObjectType.new(title: title))[:id]
     end
 
-    # @todo WRITE DOCS
-    # @todo finish!!
+    # Gets the Arnoldb IDs for all of the Object Types in Arnoldb
+    # @return [Array<Hash>] object_types the Object Type IDs and titles
+    # @option object_types [String] :id the Arnoldb ID for an Object Type
+    # @option object_types [String] :title the title for an Object Type
     def self.get_all_object_types
-      p "getting all object_types"
-
       object_types = []
       response = connection.get_all_object_types(Proto::Empty.new)
       response.object_types.each do |object_type|
