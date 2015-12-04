@@ -56,13 +56,62 @@ describe Arnoldb::Interface do
       expect { empty_title }.to raise_error(/Title required/)
     end
 
-    it 'raises an error for wrong value type' do
-      expect { wrong_value_type }.to raise_error(/Not a valid uuid/)
+    xit 'raises an error for wrong value type' do
+      expect { wrong_value_type }.to raise_error(/Wrong type/)
     end
   end
 
   describe '.create_object' do
-    it 'creates an object in arnoldb'
+    before(:all) do
+      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
+    end
+
+    let(:object) { Arnoldb::Interface.create_object(@object_type_id) }
+    let(:object_with_id) do
+      Arnoldb::Interface.create_object(
+        @object_type_id,
+        "b6785476-146d-43a4-a217-23e186ee7fd3"
+      )
+    end
+    let(:invalid_obj_id) do
+      Arnoldb::Interface.create_object(
+        @object_type_id,
+        "5"
+      )
+    end
+    let(:invalid_obj_type_id) do
+      Arnoldb::Interface.create_object(
+        "5",
+      )
+    end
+    let(:empty_obj_type_id) do
+      Arnoldb::Interface.create_object(
+        ""
+      )
+    end
+
+    it 'creates an object in arnoldb' do
+      expect(object).not_to eq(nil)
+      expect(object).not_to eq("")
+    end
+
+    it 'creates an object in arnoldb with matching id' do
+      expect(object_with_id).not_to eq(nil)
+      expect(object_with_id).not_to eq("")
+      expect(object_with_id).to eq("b6785476-146d-43a4-a217-23e186ee7fd3")
+    end
+
+    it 'raises an error for invalid object id' do
+      expect { invalid_obj_id }.to raise_error(/Not a valid uuid/)
+    end
+
+    it 'raises an error for invalid object type id' do
+      expect { invalid_obj_type_id }.to raise_error(/Not a valid uuid/)
+    end
+
+    it 'raises an error for empty object type id' do
+      expect { empty_obj_type_id }.to raise_error(/Not a valid uuid/)
+    end
   end
 
   describe '.create_values' do
