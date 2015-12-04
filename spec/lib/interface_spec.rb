@@ -327,11 +327,180 @@ describe Arnoldb::Interface do
     end
   end
 
-  describe '.get_objects' do
-    it 'gets objects from arnoldb'
+  describe '.get_values' do
+    before(:all) do
+      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
+      @field_string = Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string])
+      @field_integer = Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer])
+      @field_float = Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float])
+      @object = Arnoldb::Interface.create_object(@object_type_id)
+      @fields =  [@field_string, @field_integer, @field_float]
+      @objects = [@object]
+    end
+
+    let(:value_set1) do
+      [{
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "John Kimble"
+      },
+      {
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "30"
+      },
+      {
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "0.5"
+      }]
+    end
+    let(:value_set2) do
+      [{
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "old John Kimble"
+      },
+      {
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "3000"
+      },
+      {
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "9.81"
+      }]
+    end
+    let(:value_set3) do
+      [{
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "terminator"
+      },
+      {
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "-2000"
+      },
+      {
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "3.14"
+      }]
+    end
+    let(:current_values) do
+      Arnoldb::Interface.get_values(@object_type_id, @objects, @fields)
+    end
+    let(:past_values) do
+      Arnoldb::Interface.get_values(
+        @object_type_id,
+        @objects,
+        @fields,
+        Time.new(2012, 10, 10).to_i
+      )
+    end
+    let(:future_values) do
+      Arnoldb::Interface.get_values(
+        @object_type_id,
+        @objects,
+        @fields,
+        (Time.now + (3600 * 24 * 365)).to_i
+      )
+    end
+    let(:empty_object_type_id) do
+      Arnoldb::Interface.get_values(
+        "",
+        @objects,
+        @fields
+      )
+    end
+    let(:empty_object_id) do
+      Arnoldb::Interface.get_values(
+        @object_type_id,
+        [""],
+        @fields
+      )
+    end
+    let(:empty_field_id) do
+      Arnoldb::Interface.get_values(
+        @object_type_id,
+        @objects,
+        [""]
+      )
+    end
+    let(:one_empty_object_id) do
+      Arnoldb::Interface.get_values(
+        @object_type_id,
+        [@object,""],
+        @fields
+      )
+    end
+
+    it 'gets current values from arnoldb' do
+      expected = []
+      value_set1.each do |value|
+        expected << { id: value[:object_id], value: value[:value] }
+      end
+      Arnoldb::Interface.create_values(value_set1)
+
+      expect(current_values).to match_array(expected)
+    end
+
+    it 'gets past values from arnoldb' do
+      expected = []
+      value_set2.each do |value|
+        expected << { id: value[:object_id], value: value[:value] }
+      end
+      Arnoldb::Interface.create_values(
+        value_set2,
+        Time.new(2010, 10, 9).to_i
+      )
+
+      expect(past_values).to match_array(expected)
+    end
+
+    it 'gets future values from arnoldb' do
+      expected = []
+      value_set3.each do |value|
+        expected << { id: value[:object_id], value: value[:value] }
+      end
+      Arnoldb::Interface.create_values(
+        value_set3,
+        (Time.now + (3600 * 24 * 366)).to_i
+      )
+
+      expect(future_values).to match_array(expected)
+    end
+
+    it 'raises an error if bad object_type_id' do
+      expect { empty_object_type_id }.to raise_error(/Object Type Not Found/)
+    end
+
+    it 'raises an error if bad object_id' do
+      expect { empty_object_id }.to raise_error(/Not a valid uuid/)
+    end
+
+    it 'raises an error if bad field_id' do
+      expect { empty_field_id }.to raise_error(/Field Not Found/)
+    end
+
+    it 'raises an error if one bad object_id' do
+      expect { one_empty_object_id }.to raise_error(/Not a valid uuid/)
+    end
   end
 
-  describe '.get_values' do
-    it 'gets values from arnoldb'
+  describe '.get_objects' do
+    it 'gets objects from arnoldb' do
+    end
   end
 end
