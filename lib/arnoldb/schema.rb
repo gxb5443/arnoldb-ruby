@@ -56,7 +56,7 @@ module Arnoldb
     # cache, if no matches are found Arnoldb tries to find a match
     #
     # @todo MAYBE CHANGE it to (title, table, column=nil)
-    def self.get_id(type, title, retry: true)
+    def self.get_id(type, title, retries: 1)
       result = nil
 
       if type == "column"
@@ -65,11 +65,11 @@ module Arnoldb
         result = @@object_types[title]
       end
 
-      if result.nil? && retry
+      if result.nil? && retries > 0
         # REBUILD THE CACHE FROM ARNOLDB
         self.build
         # RETRY get_id CALL
-        result = self.get_id(type, title, retry: false)
+        result = self.get_id(type, title, retries: retries - 1)
       end
 
       result
