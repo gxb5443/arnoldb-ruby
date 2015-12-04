@@ -91,11 +91,13 @@ module Arnoldb
       object_types
     end
 
-    # @todo WRITE DOCS
-    # @todo FINISH!!!
+    # Gets Fields for an Object Type from Arnoldb
+    # @param [String] object_type_id the Arnoldb ID for the Table
+    # @return [Array<Hash>] fields the Field IDs, titles, and value types
+    # @option fields [String] :id the Arnoldb ID for a Field
+    # @option fields [String] :title the title for a Field
+    # @option fields [String] :value_type the value type for a Field
     def self.get_fields(object_type_id)
-      p "getting all fields"
-
       fields = []
       response = connection.get_fields(Proto::ObjectType.new(id: object_type_id))
       response.fields.each do |field|
@@ -106,7 +108,7 @@ module Arnoldb
     end
 
     # Gets Values from Arnoldb which match the given Object Type ID, Object IDs,
-    # and Field IDs.
+    # and Field IDs
     # @param [String] object_type_id the Arnoldb ID for the Table
     # @param [Array<String>] object_ids the Arnoldb IDs for the desired Objects
     # @param [Array<String>] field_ids the Arnoldb IDS for the desired Fields
