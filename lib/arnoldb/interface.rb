@@ -6,7 +6,6 @@ module Arnoldb
     # @param [String] title the title of the Table to be created
     # @return [String] returns the associated Arnoldb ID for the created Table
     #
-    # @todo CHANGE NAMING TO TABLE AND COLUMN
     def self.create_object_type(title)
       object_type_id = connection.set_object_type(Proto::ObjectType.new(title: title))["id"]
       Arnoldb::Schema.add_table(title, object_type_id)
@@ -20,7 +19,6 @@ module Arnoldb
     # @param [String] value_type the data type for the Column
     # @return [String] returns the associated Arnoldb ID for the created Column
     #
-    # @todo CHANGE NAMING TO TABLE AND COLUMN
     def self.create_field(object_type_id, title, value_type)
       field_id = connection.set_field(Proto::Field.new(object_type_id: object_type_id, title: title, value_type: value_type))["id"]
       Arnoldb::Schema.add_column(title, field_id, object_type_id)
@@ -34,18 +32,8 @@ module Arnoldb
     # migrations
     # @return [String] returns the associated Arnoldb ID for the created Object
     #
-    # @todo CHANGE NAMING TO TABLE AND COLUMN
     def self.create_object(object_type_id, object_id = "")
-      begin_time = Time.now
-      begin
-        response = connection.set_object(Proto::Object.new(object_type_id: object_type_id, id: object_id))["id"]
-      rescue Exception => e
-        puts "ARNOLDB:CreateObject WARNING: ".yellow + "#{ e }"
-
-        return false
-      end
-      end_time = Time.now
-      puts "ARNOLDB:#{ Arnoldb::Schema.get_title("table", object_type_id) } Created (#{ ((end_time - begin_time)*1000).round(2) }ms) ".green + "#{ response.inspect }"
+      response = connection.set_object(Proto::Object.new(object_type_id: object_type_id, id: object_id))["id"]
 
       response
     end
