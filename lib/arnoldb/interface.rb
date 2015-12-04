@@ -46,8 +46,11 @@ module Arnoldb
     # @option values [String] :value the new value
     # @param [Integer] effective_date the effective date that the value will
     # take effect
+    # @return [Array<Hash>] objects the object IDs matched with the new values
+    # in Arnoldb
+    # @option objects [String] :id the Arnoldb ID for an Object
+    # @option objects [String] :value the value assigned to an Object
     #
-    # @todo FIGURE OUT WHAT RETURNS??
     def self.create_values(values, effective_date = 0)
       values_messages = []
       values.each do |value|
