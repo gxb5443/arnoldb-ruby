@@ -115,7 +115,31 @@ describe Arnoldb::Interface do
   end
 
   describe '.create_values' do
-    it 'creates a values in arnoldb'
+    before(:all) do
+      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
+      @field_string = Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string])
+      @field_integer = Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer])
+      @field_float = Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float])
+    end
+
+    let(:object) { Arnoldb::Interface.create_object(@object_type_id) }
+    let(:values) do
+      [{
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "John Kimble"
+      }]
+    end
+    let(:current_values) do
+      Arnoldb::Interface.create_values(values)
+    end
+
+    it 'creates current values in arnoldb' do
+      expect(current_values).not_to eq(nil)
+      expect(current_values).not_to eq("")
+      expect(current_values).to eq([object])
+    end
   end
 
   describe '.get_object_type' do
