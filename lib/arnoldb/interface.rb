@@ -115,9 +115,7 @@ module Arnoldb
     # @param [DateTime] date the date for what version of the Values being
     # queried
     # @return [Array<Hash>] Values for the desired Objects and Fields
-    def self.get_values(object_type_id, object_ids, field_ids, date)
-      p "getting values"
-
+    def self.get_values(object_type_id, object_ids, field_ids, date = 0)
       objects = []
       object_ids.each do |object_id|
         objects << Proto::Object.new(id: object_id)
@@ -132,12 +130,15 @@ module Arnoldb
         object_type_id: object_type_id,
         object_ids: objects,
         fields: fields,
-        date: date.to_i
+        date: date
       )
       response = connection.get_values(values)
-      values = response.values
+      result = []
+      response.values.each do |value|
+        result << { id: value["object_id"], value: value["value"] }
+      end
 
-      values
+      result
     end
 
     # Gets Objects from Arnoldb which match specific Query Clauses for a given
