@@ -264,12 +264,39 @@ describe Arnoldb::Interface do
     end
   end
 
+  # TODO NEED TO FIGURE OUT HOW GET_OBJECT_TYPE SHOULD FUNCTION
   describe '.get_object_type' do
-    it 'gets an object type from arnoldb'
+    before(:all) do
+      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
+    end
+
+    xit 'gets an object type from arnoldb' do
+      result = Arnoldb::Interface.get_object_type("Profiles")
+
+      expect(result).to eq(@object_type_id)
+    end
+
+    xit 'gets an object type from arnoldb' do
+      result = Arnoldb::Interface.get_object_type("")
+
+      expect(result).to eq("")
+    end
   end
 
   describe '.get_object_types' do
-    it 'gets all object types from arnoldb'
+     before(:all) do
+       @object_type_ids = [
+           Arnoldb::Interface.create_object_type("Profiles"),
+           Arnoldb::Interface.create_object_type("Reports"),
+           Arnoldb::Interface.create_object_type("Jobs"),
+       ]
+    end
+
+    it 'gets all object types from arnoldb' do
+      result = Arnoldb::Interface.get_all_object_types
+
+      expect(result).to include(*@object_types_ids)
+    end
   end
 
   describe '.get_objects' do
@@ -282,9 +309,5 @@ describe Arnoldb::Interface do
 
   describe '.get_values' do
     it 'gets values from arnoldb'
-  end
-
-  describe '.connection' do
-
   end
 end
