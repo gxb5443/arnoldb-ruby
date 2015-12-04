@@ -299,12 +299,31 @@ describe Arnoldb::Interface do
     end
   end
 
-  describe '.get_objects' do
-    it 'gets objects from arnoldb'
+  describe '.get_fields' do
+    before(:all) do
+      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
+      @field_string = Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string])
+      @field_integer = Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer])
+      @field_float = Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float])
+    end
+
+    let(:fields) do
+      [
+        { id: @field_string, title: "name", value_type: :STRING },
+        { id: @field_integer, title: "age", value_type: :INT32 },
+        { id: @field_float, title: "modifier", value_type: :FLOAT32 }
+      ]
+    end
+
+    it 'gets fields from arnoldb' do
+      result = Arnoldb::Interface.get_fields(@object_type_id)
+
+      expect(result).to match_array(fields)
+    end
   end
 
-  describe '.get_fields' do
-    it 'gets fields from arnoldb'
+  describe '.get_objects' do
+    it 'gets objects from arnoldb'
   end
 
   describe '.get_values' do
