@@ -181,6 +181,30 @@ describe Arnoldb::Interface do
         value: "3.14"
       }]
     end
+    let(:empty_obj_id) do
+      [{
+        object_id: "",
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "empty_obj_id"
+      }]
+    end
+    let(:empty_obj_type_id) do
+      [{
+        object_id: object,
+        object_type_id: "",
+        field_id: @field_string,
+        value: "empty_obj_type_id"
+      }]
+    end
+    let(:empty_field_id) do
+      [{
+        object_id: object,
+        object_type_id: @object_type_id,
+        field_id: "",
+        value: "empty_field_id"
+      }]
+    end
     let(:current_values) do
       Arnoldb::Interface.create_values(value_set1)
     end
@@ -189,6 +213,15 @@ describe Arnoldb::Interface do
     end
     let(:future_values) do
       Arnoldb::Interface.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
+    end
+    let(:bad_obj_id) do
+      Arnoldb::Interface.create_values(empty_obj_id)
+    end
+    let(:bad_obj_type_id) do
+      Arnoldb::Interface.create_values(empty_obj_type_id)
+    end
+    let(:bad_field_id) do
+      Arnoldb::Interface.create_values(empty_field_id)
     end
 
     it 'creates current values in arnoldb' do
@@ -216,6 +249,18 @@ describe Arnoldb::Interface do
       end
 
       expect(future_values).to match_array(expected)
+    end
+
+    it 'raises error for object id' do
+      expect { bad_obj_id }.to raise_error(/Object Id Not Found/)
+    end
+
+    it 'raises error for object type id' do
+      expect { bad_obj_type_id }.to raise_error(/Field not associated with given Object Type/)
+    end
+
+    it 'raises error for field id' do
+      expect { bad_field_id }.to raise_error(/Field Not Found/)
     end
   end
 
