@@ -41,32 +41,27 @@ module Arnoldb
     # Creates values in Arnoldb for specific Object Columns
     # @param [Array<Hash>] values the values which will be created in Arnoldb
     # @option values [String] :object_id the Arnoldb ID for the Object
+    # @option values [String] :object_type_id the Arnoldb ID for the Object Type
     # @option values [String] :field_id the Arnoldb ID for the Column
     # @option values [String] :value the new value
     # @param [Integer] effective_date the effective date that the value will
     # take effect
     #
     # @todo FIGURE OUT WHAT RETURNS??
-    def self.create_values(values, effective_date)
-      p "creating values"
+    def self.create_values(values, effective_date = 0)
       values_messages = []
       values.each do |value|
         field = Proto::Field.new(id: value[:field_id], object_type_id: value[:object_type_id])
         values_messages << Proto::Value.new(object_id: value[:object_id], value: value[:value].to_s, field: field)
       end
 
-      begin_time = Time.now
-      begin
-        response = connection.set_values(Proto::Values.new(values: values_messages, date: effective_date))
-      rescue Exception => e
-        puts "ARNOLDB:SetValues WARNING: ".yellow + "#{ e }"
-
-        return false
+      response = connection.set_values(Proto::Values.new(values: values_messages, date: effective_date))
+      object_ids = []
+      response.values.each do |value|
+        object_ids << value["object_id"]
       end
-      end_time = Time.now
-      puts "ARNOLDB:#{ Arnoldb::Schema.get_title("table", response.object_type_id) } (#{ ((end_time - begin_time)*1000).round(2) }ms) ".green + "#{ response.inspect }"
 
-      response
+      object_ids
     end
 
     # Gets the Arnoldb ID of specific Table
