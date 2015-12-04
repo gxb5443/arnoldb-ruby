@@ -56,12 +56,12 @@ module Arnoldb
       end
 
       response = connection.set_values(Proto::Values.new(values: values_messages, date: effective_date))
-      object_ids = []
+      objects = []
       response.values.each do |value|
-        object_ids << value["object_id"]
+        objects << { id: value["object_id"], value: value["value"] }
       end
 
-      object_ids
+      objects
     end
 
     # Gets the Arnoldb ID of specific Table
