@@ -4,7 +4,7 @@ db_arnoldb:
     POSTGRES_DB: arnold
 
 arnoldb:
-  image: registry.namely.tech/namely/arnoldb:c77f3de7
+  image: registry.namely.tech/namely/arnoldb:afe92fa4
   ports:
     - "8080"
   environment:
