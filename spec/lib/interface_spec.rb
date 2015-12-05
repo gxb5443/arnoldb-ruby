@@ -6,6 +6,13 @@ TYPES = {
   string: 2,
 }
 
+COP = {
+  NONE: 0,
+  LT: 1,
+  GT: 2,
+  EQ: 3
+}
+
 describe Arnoldb::Interface do
   describe '.create_object_type' do
     let(:object_type_id) { Arnoldb::Interface.create_object_type("Profiles") }
@@ -500,7 +507,150 @@ describe Arnoldb::Interface do
   end
 
   describe '.get_objects' do
-    it 'gets objects from arnoldb' do
+    before(:all) do
+      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
+      @field_string = Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string])
+      @field_integer = Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer])
+      @field_float = Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float])
+      @obj_1 = Arnoldb::Interface.create_object(@object_type_id)
+    end
+
+    let(:value_set1) do
+      [{
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "John Kimble"
+      },
+      {
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "30"
+      },
+      {
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "0.5"
+      }]
+    end
+    let(:value_set2) do
+      [{
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "old John Kimble"
+      },
+      {
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "3000"
+      },
+      {
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "9.81"
+      }]
+    end
+    let(:value_set3) do
+      [{
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "terminator"
+      },
+      {
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "-2000"
+      },
+      {
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "3.14"
+      }]
+    end
+    let(:past_values) do
+      Arnoldb::Interface.create_values(value_set2, Time.new(2010, 10, 10).to_i)
+    end
+    let(:future_values) do
+      Arnoldb::Interface.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
+    end
+    let(:bad_operator) do
+      Arnoldb::Interface.get_objects(
+        @object_type_id,
+        [{
+          field_id: @field_string,
+          value: "John Kimble",
+          operator: 99
+        }]
+      )
+    end
+    let(:bad_obj_type_id) do
+      Arnoldb::Interface.get_objects(
+        "",
+        [{
+          field_id: @field_string,
+          value: "John Kimble",
+          operator: COP[:EQ]
+        }]
+      )
+    end
+    let(:bad_field_id) do
+      Arnoldb::Interface.get_objects(
+        @object_type_id,
+        [{
+          field_id: "",
+          value: "John Kimble",
+          operator: COP[:EQ]
+        }]
+      )
+    end
+
+    xit 'gets objects from arnoldb' do
+      Arnoldb::Interface.create_values(value_set1)
+
+      result = Arnoldb::Interface.get_objects(
+        @object_type_id,
+        [{
+          field_id: @field_string,
+          value: "John Kimble",
+          operator: COP[:EQ]
+        }]
+      )
+      expected = {
+        id: @obj_1,
+        object_type_id: @object_type_id,
+        values: {
+          field_id: @field_string,
+          value: ""
+        }
+      }
+
+      expect(result).to include(@obj_1)
+    end
+
+    it 'raises an error with empty object_type_id' do
+      Arnoldb::Interface.create_values(value_set1)
+
+      expect { bad_obj_type_id }.to raise_error(/Not a valid uuid/)
+    end
+
+    it 'raises an error with empty field_id' do
+      Arnoldb::Interface.create_values(value_set1)
+
+      expect { bad_field_id }.to raise_error(/Not a valid uuid/)
+    end
+
+    it 'raises an error with empty operator' do
+      Arnoldb::Interface.create_values(value_set1)
+
+      expect { bad_operator }.to raise_error(/Not a valid operator/)
     end
   end
 end
