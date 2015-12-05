@@ -5,7 +5,6 @@ module Arnoldb
     # Creates a Table in Arnoldb
     # @param [String] title the title of the Table to be created
     # @return [String] returns the associated Arnoldb ID for the created Table
-    #
     def self.create_object_type(title)
       object_type_id = connection.set_object_type(Proto::ObjectType.new(title: title))["id"]
       Arnoldb::Schema.add_table(title, object_type_id)
@@ -18,7 +17,6 @@ module Arnoldb
     # @param [String] title the title of the Column to be created
     # @param [String] value_type the data type for the Column
     # @return [String] returns the associated Arnoldb ID for the created Column
-    #
     def self.create_field(object_type_id, title, value_type)
       field_id = connection.set_field(Proto::Field.new(object_type_id: object_type_id, title: title, value_type: value_type))["id"]
       Arnoldb::Schema.add_column(title, field_id, object_type_id)
@@ -31,7 +29,6 @@ module Arnoldb
     # @param [String] object_id the Object's Arnoldb ID used for setting during
     # migrations
     # @return [String] returns the associated Arnoldb ID for the created Object
-    #
     def self.create_object(object_type_id, object_id = "")
       response = connection.set_object(Proto::Object.new(object_type_id: object_type_id, id: object_id))["id"]
 
@@ -50,7 +47,6 @@ module Arnoldb
     # in Arnoldb
     # @option objects [String] :id the Arnoldb ID for an Object
     # @option objects [String] :value the value assigned to an Object
-    #
     def self.create_values(values, effective_date = 0)
       values_messages = []
       values.each do |value|
@@ -148,9 +144,7 @@ module Arnoldb
     # @param [DateTime] date the date for what version of the Objects being
     # queried
     # @return [Array<Hash>] Objects which satisfy the clauses
-    def self.get_objects(object_type_id, clauses, date, arnoldb_objects = false)
-      p "getting objects"
-
+    def self.get_objects(object_type_id, clauses, date = 0)
       if clauses.count > 1
         leaves = []
         clauses.each do |clause|
@@ -168,12 +162,12 @@ module Arnoldb
           left = leaves.pop
           right = branches.empty? ? leaves.pop : branches.pop
 
+        # @todo HARD CODED LOGICAL OPERATOR AS "1" WHICH is AND
           branch = Proto::Objects::Clause::Branch.new(lop: 1, left: left, right: right)
           branch = Proto::Objects::Clause.new(b: branch)
           branches << branch
         end
 
-        # @todo HARD CODED LOGICAL OPERATOR AS "1" WHICH is AND
         clause_messages = [Proto::Objects::Clause.new(b: branches.pop)]
       elsif clauses.count == 1
         clause = clauses.pop
@@ -187,34 +181,31 @@ module Arnoldb
         clause_messages = []
       end
 
-      objects = []
       objects_query = Proto::Objects.new(object_type_id: object_type_id, clauses: clause_messages, date: date.to_i)
-      begin_time = Time.now
-      begin
-        response = connection.get_objects(objects_query)
-      rescue Exception => e
-        puts "ARNOLDB:GetObjects WARNING: ".yellow + "#{ e }"
 
-        return objects = []
-      end
-      end_time = Time.now
-
-      puts "ARNOLDB:#{ response.object_type_title.capitalize } (#{ ((end_time - begin_time)*1000).round(2) }ms) ".green + "#{ objects_query.inspect }"
-      $stdout.flush
-
-      if arnoldb_objects
-        return response.objects
-      end
-      begin_time = Time.now
+      response = connection.get_objects(objects_query)
+      objects = []
       response.objects.each do |object|
-        objects << Arnoldb::Mapper.convert(object)
+        values = []
+        object.values.each do |value|
+          values << {
+            value: value["value"],
+            field_id: value.field["id"],
+            title: value.field["title"],
+            value_type: value.field["value_type"]
+          }
+        end
+        objects << {
+          id: object["id"],
+          object_type_id: object["object_type_id"],
+          values: values
+        }
       end
-      end_time = Time.now
-      puts "ARNOLDB:Mapping (#{ ((end_time - begin_time)*1000).round(2) }ms) ".green + "#{objects.count} objects mapped"
-      $stdout.flush
 
       objects
     end
+
+    private
 
     # Makes a connection to Arnoldb
     #
