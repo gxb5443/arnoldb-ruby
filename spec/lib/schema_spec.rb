@@ -27,7 +27,35 @@ describe Arnoldb::Schema do
   end
 
   describe '.get_columns' do
+    before(:all) {
+      Arnoldb::Schema.class_variable_set(:@@fields, {})
+      Arnoldb::Schema.class_variable_set(:@@field_ids, {})
+    }
 
+    after(:each) {
+      Arnoldb::Schema.class_variable_set(:@@fields, {})
+      Arnoldb::Schema.class_variable_set(:@@field_ids, {})
+    }
+
+    it 'finds all columns for a table' do
+      Arnoldb::Schema.class_variable_set(
+        :@@fields,
+        {
+          "GHOSTS.operation_id" => "007",
+          "GHOSTS.weapon" => "008",
+          "GHOSTS.kias" => "009",
+          "GHOSTS.id" => "010",
+        }
+      )
+      expected = {
+        "operation_id" => "007",
+        "weapon" => "008",
+        "kias" => "009",
+        "id" => "010",
+      }
+
+      expect(Arnoldb::Schema.get_columns("GHOSTS")).to match(expected)
+    end
   end
 
   describe '.add_table' do
