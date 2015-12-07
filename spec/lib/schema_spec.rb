@@ -23,7 +23,41 @@ describe Arnoldb::Schema do
   end
 
   describe '.get_title' do
+    before(:all) {
+      Arnoldb::Schema.class_variable_set(:@@object_types, {})
+      Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
+      Arnoldb::Schema.class_variable_set(:@@fields, {})
+      Arnoldb::Schema.class_variable_set(:@@field_ids, {})
+    }
 
+    after(:each) {
+      Arnoldb::Schema.class_variable_set(:@@object_types, {})
+      Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
+      Arnoldb::Schema.class_variable_set(:@@fields, {})
+      Arnoldb::Schema.class_variable_set(:@@field_ids, {})
+    }
+
+    it 'gets the title of a column' do
+      Arnoldb::Schema.class_variable_set(
+        :@@field_ids,
+        {
+          "555" => "SIGN.number",
+        }
+      )
+
+      expect(Arnoldb::Schema.get_title("column", "555")).to eq("SIGN.number")
+    end
+
+    it 'gets the title of a table' do
+      Arnoldb::Schema.class_variable_set(
+        :@@object_type_ids,
+        {
+          "111" => "ADMINS",
+        }
+      )
+
+      expect(Arnoldb::Schema.get_title("table", "111")).to eq("ADMINS")
+    end
   end
 
   describe '.get_columns' do
