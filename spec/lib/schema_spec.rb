@@ -6,23 +6,6 @@ describe Arnoldb::Schema do
   end
 
   describe '.get_id' do
-
-    context 'when looking for object types' do
-      xit 'finds the correct id' do
-
-      end
-
-    end
-
-    context 'when looking for fields' do
-      xit 'finds the correct id' do
-
-      end
-
-    end
-  end
-
-  describe '.get_title' do
     before(:all) {
       Arnoldb::Schema.class_variable_set(:@@object_types, {})
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
@@ -34,6 +17,74 @@ describe Arnoldb::Schema do
       Arnoldb::Schema.class_variable_set(:@@object_types, {})
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
       Arnoldb::Schema.class_variable_set(:@@fields, {})
+      Arnoldb::Schema.class_variable_set(:@@field_ids, {})
+    }
+
+    context 'when looking for object types' do
+      it 'gets the correct id' do
+        Arnoldb::Schema.class_variable_set(
+          :@@object_types,
+          {
+            "TOKENS" => "11110",
+            "HASHES" => "11111",
+          }
+        )
+
+        expect(Arnoldb::Schema.get_id("table", "TOKENS")).to eq("11110")
+      end
+
+      it 'normalizes titles' do
+        Arnoldb::Schema.class_variable_set(
+          :@@object_types,
+          {
+            "TOKENS" => "11110",
+            "HASHES" => "11111",
+          }
+        )
+
+        expect(Arnoldb::Schema.get_id("table", "toKenS")).to eq("11110")
+      end
+    end
+
+    context 'when looking for fields' do
+      it 'gets the correct id' do
+        Arnoldb::Schema.class_variable_set(
+          :@@fields,
+          {
+            "TOKENS.id" => "314",
+            "TOKENS.name" => "315",
+            "HASHES.id" => "316",
+            "HASHES.name" => "317",
+          }
+        )
+
+        expect(Arnoldb::Schema.get_id("column", "TOKENS.id")).to eq("314")
+      end
+
+      it 'normalize titles' do
+        Arnoldb::Schema.class_variable_set(
+          :@@fields,
+          {
+            "TOKENS.id" => "314",
+            "TOKENS.name" => "315",
+            "HASHES.id" => "316",
+            "HASHES.name" => "317",
+          }
+        )
+
+        expect(Arnoldb::Schema.get_id("column", "TokENs.ID")).to eq("314")
+      end
+    end
+  end
+
+  describe '.get_title' do
+    before(:all) {
+      Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
+      Arnoldb::Schema.class_variable_set(:@@field_ids, {})
+    }
+
+    after(:each) {
+      Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
     }
 
