@@ -56,6 +56,26 @@ describe Arnoldb::Schema do
 
       expect(Arnoldb::Schema.get_columns("GHOSTS")).to match(expected)
     end
+
+    it 'normalize title' do
+      Arnoldb::Schema.class_variable_set(
+        :@@fields,
+        {
+          "COUNTRY.operatives" => "080",
+          "COUNTRY.lives" => "090",
+          "COUNTRY.reach" => "100",
+          "COUNTRY.id" => "110",
+        }
+      )
+      expected = {
+        "operatives" => "080",
+        "lives" => "090",
+        "reach" => "100",
+        "id" => "110",
+      }
+
+      expect(Arnoldb::Schema.get_columns("CouNtry")).to match(expected)
+    end
   end
 
   describe '.add_table' do
