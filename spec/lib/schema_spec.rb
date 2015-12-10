@@ -107,15 +107,15 @@ describe Arnoldb::Schema do
   end
 
   describe ".get_title" do
-    before(:all) {
+    before(:all) do
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
-    }
+    end
 
-    after(:each) {
+    after(:each) do
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
-    }
+    end
 
     it "gets the title of a column" do
       Arnoldb::Schema.class_variable_set(
@@ -141,15 +141,15 @@ describe Arnoldb::Schema do
   end
 
   describe ".get_columns" do
-    before(:all) {
+    before(:all) do
       Arnoldb::Schema.class_variable_set(:@@fields, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
-    }
+    end
 
-    after(:each) {
+    after(:each) do
       Arnoldb::Schema.class_variable_set(:@@fields, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
-    }
+    end
 
     it "finds all columns for a table" do
       Arnoldb::Schema.class_variable_set(
@@ -222,15 +222,15 @@ describe Arnoldb::Schema do
   end
 
   describe ".add_column" do
-    before(:all) {
+    before(:all) do
       Arnoldb::Schema.class_variable_set(:@@fields, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
-    }
+    end
 
-    after(:each) {
+    after(:each) do
       Arnoldb::Schema.class_variable_set(:@@fields, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
-    }
+    end
 
     it "adds a field" do
       allow(Arnoldb::Schema).to receive(:get_title) { "PROFILES" }
