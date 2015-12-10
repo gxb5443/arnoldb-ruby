@@ -2,7 +2,31 @@ require './spec/spec_helper.rb'
 
 describe Arnoldb::Schema do
   describe '.build' do
+    before(:all) {
+      Arnoldb::Schema.class_variable_set(:@@object_types, {})
+      Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
+      Arnoldb::Schema.class_variable_set(:@@fields, {})
+      Arnoldb::Schema.class_variable_set(:@@field_ids, {})
+    }
 
+    it 'gets all object types from Arnoldb' do
+      object_types = [
+        { id: "222", title: "Animals" }
+      ]
+      fields = [
+        { id: "2220", title: "name" },
+        { id: "3331", title: "age" }
+      ]
+
+      allow(Arnoldb::Interface).to receive(:get_all_object_types) { object_types }
+      allow(Arnoldb::Interface).to receive(:get_fields) { fields }
+      expect(Arnoldb::Interface).to receive(:get_all_object_types)
+      Arnoldb::Schema.build
+
+      expect(Arnoldb::Schema.class_variable_get(:@@object_types)).to match("ANIMALS" => "222")
+      expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids)).to match("222" => "ANIMALS")
+      expect(Arnoldb::Schema.class_variable_get(:@@fields)).to match("ANIMALS.name" => "2220", "ANIMALS.age" => "3331")
+    end
   end
 
   describe '.get_id' do
@@ -43,6 +67,11 @@ describe Arnoldb::Schema do
         )
 
         expect(Arnoldb::Schema.get_id("table", "toKenS")).to eq("11110")
+      end
+
+      it 'rebuilds the cache if not found' do
+        expect(Arnoldb::Schema).to receive(:build)
+        Arnoldb::Schema.get_id("table", "MISSING")
       end
     end
 
