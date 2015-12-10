@@ -30,8 +30,11 @@ module Arnoldb
       result = nil
 
       if type == "column"
+        table, col = title.split(".")
+        title = table.upcase + "." + col.downcase
         result = @@fields[title]
       else
+        title.upcase!
         result = @@object_types[title]
       end
 
@@ -80,7 +83,6 @@ module Arnoldb
     def self.add_table(name, table_id)
       # @todo Change this to capitalize format names correctly
       name.upcase!
-      p "Adding table to cache: #{name}"
       @@object_types[name] = table_id
       @@object_type_ids[table_id] = name
     end
