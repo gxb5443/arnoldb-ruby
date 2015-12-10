@@ -86,6 +86,25 @@ module Arnoldb
       object_types
     end
 
+    # Gets a Field from its Arnoldb ID
+    # @param [String] field_id the Arnoldb ID for the Field
+    # @return [Hash] fields the Field ID, Object Type ID, title, and value type
+    # @option fields [String] :id the Arnoldb ID for a Field
+    # @option fields [String] :title the title for a Field
+    # @option fields [String] :value_type the value type for a Field
+    # @option fields [String] :object_type_id the Object Type for a Field
+    def self.get_field(field_id)
+      field = connection.get_field(Proto::Field.new(id: field_id))
+      result = {
+        id: field.id,
+        title: field.title,
+        value_type: field.value_type,
+        object_type_id: field.object_type_id
+      }
+
+      result
+    end
+
     # Gets Fields for an Object Type from Arnoldb
     # @param [String] object_type_id the Arnoldb ID for the Table
     # @return [Array<Hash>] fields the Field IDs, titles, and value types
