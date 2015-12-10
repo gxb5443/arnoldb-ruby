@@ -69,7 +69,6 @@ module Arnoldb
     #
     # @todo finish ARNOLDB to allow for titles to be sent
     def self.get_object_type(title)
-      p "getting object_type"
       connection.get_object_type(Proto::ObjectType.new(title: title))[:id]
     end
 
