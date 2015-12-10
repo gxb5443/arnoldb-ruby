@@ -1,15 +1,15 @@
-require './spec/spec_helper.rb'
+require "./spec/spec_helper.rb"
 
 describe Arnoldb::Schema do
-  describe '.build' do
-    before(:all) {
+  describe ".build" do
+    before(:all) do
       Arnoldb::Schema.class_variable_set(:@@object_types, {})
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
       Arnoldb::Schema.class_variable_set(:@@fields, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
-    }
+    end
 
-    it 'gets all object types from Arnoldb' do
+    it "gets all object types from Arnoldb" do
       object_types = [
         { id: "222", title: "Animals" }
       ]
@@ -29,23 +29,23 @@ describe Arnoldb::Schema do
     end
   end
 
-  describe '.get_id' do
-    before(:all) {
+  describe ".get_id" do
+    before(:all) do
       Arnoldb::Schema.class_variable_set(:@@object_types, {})
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
       Arnoldb::Schema.class_variable_set(:@@fields, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
-    }
+    end
 
-    after(:each) {
+    after(:each) do
       Arnoldb::Schema.class_variable_set(:@@object_types, {})
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
       Arnoldb::Schema.class_variable_set(:@@fields, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
-    }
+    end
 
-    context 'when looking for object types' do
-      it 'gets the correct id' do
+    context "when looking for object types" do
+      it "gets the correct id" do
         Arnoldb::Schema.class_variable_set(
           :@@object_types,
           {
@@ -57,7 +57,7 @@ describe Arnoldb::Schema do
         expect(Arnoldb::Schema.get_id("table", "TOKENS")).to eq("11110")
       end
 
-      it 'normalizes titles' do
+      it "normalizes titles" do
         Arnoldb::Schema.class_variable_set(
           :@@object_types,
           {
@@ -69,14 +69,14 @@ describe Arnoldb::Schema do
         expect(Arnoldb::Schema.get_id("table", "toKenS")).to eq("11110")
       end
 
-      it 'rebuilds the cache if not found' do
+      it "rebuilds the cache if not found" do
         expect(Arnoldb::Schema).to receive(:build)
         Arnoldb::Schema.get_id("table", "MISSING")
       end
     end
 
-    context 'when looking for fields' do
-      it 'gets the correct id' do
+    context "when looking for fields" do
+      it "gets the correct id" do
         Arnoldb::Schema.class_variable_set(
           :@@fields,
           {
@@ -90,7 +90,7 @@ describe Arnoldb::Schema do
         expect(Arnoldb::Schema.get_id("column", "TOKENS.id")).to eq("314")
       end
 
-      it 'normalize titles' do
+      it "normalize titles" do
         Arnoldb::Schema.class_variable_set(
           :@@fields,
           {
@@ -106,7 +106,7 @@ describe Arnoldb::Schema do
     end
   end
 
-  describe '.get_title' do
+  describe ".get_title" do
     before(:all) {
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
@@ -117,7 +117,7 @@ describe Arnoldb::Schema do
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
     }
 
-    it 'gets the title of a column' do
+    it "gets the title of a column" do
       Arnoldb::Schema.class_variable_set(
         :@@field_ids,
         {
@@ -128,7 +128,7 @@ describe Arnoldb::Schema do
       expect(Arnoldb::Schema.get_title("column", "555")).to eq("SIGN.number")
     end
 
-    it 'gets the title of a table' do
+    it "gets the title of a table" do
       Arnoldb::Schema.class_variable_set(
         :@@object_type_ids,
         {
@@ -140,7 +140,7 @@ describe Arnoldb::Schema do
     end
   end
 
-  describe '.get_columns' do
+  describe ".get_columns" do
     before(:all) {
       Arnoldb::Schema.class_variable_set(:@@fields, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
@@ -151,7 +151,7 @@ describe Arnoldb::Schema do
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
     }
 
-    it 'finds all columns for a table' do
+    it "finds all columns for a table" do
       Arnoldb::Schema.class_variable_set(
         :@@fields,
         {
@@ -171,7 +171,7 @@ describe Arnoldb::Schema do
       expect(Arnoldb::Schema.get_columns("GHOSTS")).to match(expected)
     end
 
-    it 'normalize title' do
+    it "normalize title" do
       Arnoldb::Schema.class_variable_set(
         :@@fields,
         {
@@ -192,7 +192,7 @@ describe Arnoldb::Schema do
     end
   end
 
-  describe '.add_table' do
+  describe ".add_table" do
     before(:all) do
       Arnoldb::Schema.class_variable_set(:@@object_types, {})
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
@@ -203,14 +203,14 @@ describe Arnoldb::Schema do
       Arnoldb::Schema.class_variable_set(:@@object_type_ids, {})
     end
 
-    it 'adds an object type' do
+    it "adds an object type" do
       Arnoldb::Schema.add_table("ARTICLES", "abc")
 
       expect(Arnoldb::Schema.class_variable_get(:@@object_types)).to include("ARTICLES" => "abc")
       expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids)).to include("abc" => "ARTICLES")
     end
 
-    it 'normalizes titles' do
+    it "normalizes titles" do
       Arnoldb::Schema.add_table("people", "def")
       Arnoldb::Schema.add_table("OfFices_ArounD", "ghi")
 
@@ -221,7 +221,7 @@ describe Arnoldb::Schema do
     end
   end
 
-  describe '.add_column' do
+  describe ".add_column" do
     before(:all) {
       Arnoldb::Schema.class_variable_set(:@@fields, {})
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
@@ -232,7 +232,7 @@ describe Arnoldb::Schema do
       Arnoldb::Schema.class_variable_set(:@@field_ids, {})
     }
 
-    it 'adds a field' do
+    it "adds a field" do
       allow(Arnoldb::Schema).to receive(:get_title) { "PROFILES" }
       Arnoldb::Schema.add_column("first", "123","456")
 
@@ -240,7 +240,7 @@ describe Arnoldb::Schema do
       expect(Arnoldb::Schema.class_variable_get(:@@field_ids)).to include("123" => "PROFILES.first")
     end
 
-    it 'normalizes titles' do
+    it "normalizes titles" do
       allow(Arnoldb::Schema).to receive(:get_title) { "PROFILES" }
       Arnoldb::Schema.add_column("laSt_namE", "789","456")
       Arnoldb::Schema.add_column("STYLE", "101112","456")
