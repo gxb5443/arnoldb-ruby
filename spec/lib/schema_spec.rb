@@ -48,10 +48,8 @@ describe Arnoldb::Schema do
       it "gets the correct id" do
         Arnoldb::Schema.class_variable_set(
           :@@object_types,
-          {
-            "TOKENS" => "11110",
-            "HASHES" => "11111",
-          }
+          "TOKENS" => "11110",
+          "HASHES" => "11111",
         )
 
         expect(Arnoldb::Schema.get_id("table", "TOKENS")).to eq("11110")
@@ -60,10 +58,8 @@ describe Arnoldb::Schema do
       it "normalizes titles" do
         Arnoldb::Schema.class_variable_set(
           :@@object_types,
-          {
-            "TOKENS" => "11110",
-            "HASHES" => "11111",
-          }
+          "TOKENS" => "11110",
+          "HASHES" => "11111",
         )
 
         expect(Arnoldb::Schema.get_id("table", "toKenS")).to eq("11110")
@@ -79,12 +75,10 @@ describe Arnoldb::Schema do
       it "gets the correct id" do
         Arnoldb::Schema.class_variable_set(
           :@@fields,
-          {
-            "TOKENS.id" => "314",
-            "TOKENS.name" => "315",
-            "HASHES.id" => "316",
-            "HASHES.name" => "317",
-          }
+          "TOKENS.id" => "314",
+          "TOKENS.name" => "315",
+          "HASHES.id" => "316",
+          "HASHES.name" => "317",
         )
 
         expect(Arnoldb::Schema.get_id("column", "TOKENS.id")).to eq("314")
@@ -93,12 +87,10 @@ describe Arnoldb::Schema do
       it "normalize titles" do
         Arnoldb::Schema.class_variable_set(
           :@@fields,
-          {
-            "TOKENS.id" => "314",
-            "TOKENS.name" => "315",
-            "HASHES.id" => "316",
-            "HASHES.name" => "317",
-          }
+          "TOKENS.id" => "314",
+          "TOKENS.name" => "315",
+          "HASHES.id" => "316",
+          "HASHES.name" => "317",
         )
 
         expect(Arnoldb::Schema.get_id("column", "TokENs.ID")).to eq("314")
@@ -120,9 +112,7 @@ describe Arnoldb::Schema do
     it "gets the title of a column" do
       Arnoldb::Schema.class_variable_set(
         :@@field_ids,
-        {
-          "555" => "SIGN.number",
-        }
+        "555" => "SIGN.number",
       )
 
       expect(Arnoldb::Schema.get_title("column", "555")).to eq("SIGN.number")
@@ -131,9 +121,7 @@ describe Arnoldb::Schema do
     it "gets the title of a table" do
       Arnoldb::Schema.class_variable_set(
         :@@object_type_ids,
-        {
-          "111" => "ADMINS",
-        }
+        "111" => "ADMINS"
       )
 
       expect(Arnoldb::Schema.get_title("table", "111")).to eq("ADMINS")
@@ -154,12 +142,10 @@ describe Arnoldb::Schema do
     it "finds all columns for a table" do
       Arnoldb::Schema.class_variable_set(
         :@@fields,
-        {
-          "GHOSTS.operation_id" => "007",
-          "GHOSTS.weapon" => "008",
-          "GHOSTS.kias" => "009",
-          "GHOSTS.id" => "010",
-        }
+        "GHOSTS.operation_id" => "007",
+        "GHOSTS.weapon" => "008",
+        "GHOSTS.kias" => "009",
+        "GHOSTS.id" => "010",
       )
       expected = {
         "operation_id" => "007",
@@ -174,12 +160,10 @@ describe Arnoldb::Schema do
     it "normalize title" do
       Arnoldb::Schema.class_variable_set(
         :@@fields,
-        {
-          "COUNTRY.operatives" => "080",
-          "COUNTRY.lives" => "090",
-          "COUNTRY.reach" => "100",
-          "COUNTRY.id" => "110",
-        }
+        "COUNTRY.operatives" => "080",
+        "COUNTRY.lives" => "090",
+        "COUNTRY.reach" => "100",
+        "COUNTRY.id" => "110",
       )
       expected = {
         "operatives" => "080",
