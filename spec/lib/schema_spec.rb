@@ -18,20 +18,20 @@ describe Arnoldb::Schema do
         { id: "3331", title: "age" }
       ]
 
-      allow(Arnoldb::Interface)
-        .to receive(:get_all_object_types) { object_types }
-      allow(Arnoldb::Interface)
-        .to receive(:get_fields) { fields }
+      allow(Arnoldb::Interface).
+        to receive(:get_all_object_types) { object_types }
+      allow(Arnoldb::Interface).
+        to receive(:get_fields) { fields }
 
       expect(Arnoldb::Interface).to receive(:get_all_object_types)
       Arnoldb::Schema.build
 
-      expect(Arnoldb::Schema.class_variable_get(:@@object_types))
-        .to match("ANIMALS" => "222")
-      expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids))
-        .to match("222" => "ANIMALS")
-      expect(Arnoldb::Schema.class_variable_get(:@@fields))
-        .to match("ANIMALS.name" => "2220", "ANIMALS.age" => "3331")
+      expect(Arnoldb::Schema.class_variable_get(:@@object_types)).
+        to match("ANIMALS" => "222")
+      expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids)).
+        to match("222" => "ANIMALS")
+      expect(Arnoldb::Schema.class_variable_get(:@@fields)).
+        to match("ANIMALS.name" => "2220", "ANIMALS.age" => "3331")
     end
   end
 
@@ -196,24 +196,24 @@ describe Arnoldb::Schema do
     it "adds an object type" do
       Arnoldb::Schema.add_table("ARTICLES", "abc")
 
-      expect(Arnoldb::Schema.class_variable_get(:@@object_types))
-        .to include("ARTICLES" => "abc")
-      expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids))
-        .to include("abc" => "ARTICLES")
+      expect(Arnoldb::Schema.class_variable_get(:@@object_types)).
+        to include("ARTICLES" => "abc")
+      expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids)).
+        to include("abc" => "ARTICLES")
     end
 
     it "normalizes titles" do
       Arnoldb::Schema.add_table("people", "def")
       Arnoldb::Schema.add_table("OfFices_ArounD", "ghi")
 
-      expect(Arnoldb::Schema.class_variable_get(:@@object_types))
-        .to include("PEOPLE" => "def")
-      expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids))
-        .to include("def" => "PEOPLE")
-      expect(Arnoldb::Schema.class_variable_get(:@@object_types))
-        .to include("OFFICES_AROUND" => "ghi")
-      expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids))
-        .to include("ghi" => "OFFICES_AROUND")
+      expect(Arnoldb::Schema.class_variable_get(:@@object_types)).
+        to include("PEOPLE" => "def")
+      expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids)).
+        to include("def" => "PEOPLE")
+      expect(Arnoldb::Schema.class_variable_get(:@@object_types)).
+        to include("OFFICES_AROUND" => "ghi")
+      expect(Arnoldb::Schema.class_variable_get(:@@object_type_ids)).
+        to include("ghi" => "OFFICES_AROUND")
     end
   end
 
@@ -232,10 +232,10 @@ describe Arnoldb::Schema do
       allow(Arnoldb::Schema).to receive(:get_title) { "PROFILES" }
       Arnoldb::Schema.add_column("first", "123","456")
 
-      expect(Arnoldb::Schema.class_variable_get(:@@fields))
-        .to include("PROFILES.first" => "123")
-      expect(Arnoldb::Schema.class_variable_get(:@@field_ids))
-        .to include("123" => "PROFILES.first")
+      expect(Arnoldb::Schema.class_variable_get(:@@fields)).
+        to include("PROFILES.first" => "123")
+      expect(Arnoldb::Schema.class_variable_get(:@@field_ids)).
+        to include("123" => "PROFILES.first")
     end
 
     it "normalizes titles" do
@@ -244,18 +244,18 @@ describe Arnoldb::Schema do
       Arnoldb::Schema.add_column("STYLE", "101112","456")
       Arnoldb::Schema.add_column("g FACTOR", "131415","456")
 
-      expect(Arnoldb::Schema.class_variable_get(:@@fields))
-        .to include("PROFILES.last_name" => "789")
-      expect(Arnoldb::Schema.class_variable_get(:@@field_ids))
-        .to include("789" => "PROFILES.last_name")
-      expect(Arnoldb::Schema.class_variable_get(:@@fields))
-        .to include("PROFILES.style" => "101112")
-      expect(Arnoldb::Schema.class_variable_get(:@@field_ids))
-        .to include("101112" => "PROFILES.style")
-      expect(Arnoldb::Schema.class_variable_get(:@@fields))
-        .to include("PROFILES.g factor" => "131415")
-      expect(Arnoldb::Schema.class_variable_get(:@@field_ids))
-        .to include("131415" => "PROFILES.g factor")
+      expect(Arnoldb::Schema.class_variable_get(:@@fields)).
+        to include("PROFILES.last_name" => "789")
+      expect(Arnoldb::Schema.class_variable_get(:@@field_ids)).
+        to include("789" => "PROFILES.last_name")
+      expect(Arnoldb::Schema.class_variable_get(:@@fields)).
+        to include("PROFILES.style" => "101112")
+      expect(Arnoldb::Schema.class_variable_get(:@@field_ids)).
+        to include("101112" => "PROFILES.style")
+      expect(Arnoldb::Schema.class_variable_get(:@@fields)).
+        to include("PROFILES.g factor" => "131415")
+      expect(Arnoldb::Schema.class_variable_get(:@@field_ids)).
+        to include("131415" => "PROFILES.g factor")
     end
   end
 end
