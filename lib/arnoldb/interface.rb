@@ -107,10 +107,10 @@ module Arnoldb
 
     # Gets Fields for an Object Type from Arnoldb
     # @param [String] object_type_id the Arnoldb ID for the Table
-    # @return [Array<Hash>] fields the Field IDs, titles, and value types
-    # @option fields [String] :id the Arnoldb ID for a Field
-    # @option fields [String] :title the title for a Field
-    # @option fields [String] :value_type the value type for a Field
+    # @return [Array<Hash>] field the Field IDs, titles, and value types
+    # @option field [String] :id the Arnoldb ID for a Field
+    # @option field [String] :title the title for a Field
+    # @option field [String] :value_type the value type for a Field
     def self.get_fields(object_type_id)
       fields = []
       response = connection.get_fields(Proto::ObjectType.new(id: object_type_id))
@@ -119,6 +119,39 @@ module Arnoldb
       end
 
       fields
+    end
+
+    # Gets Transactional data from Arnoldb for an Object
+    # @param [String] object_id the Arnoldb ID for the object
+    # @return [Array<Hash>] values the Field ID, Object Type ID, title, and value type
+    # @option values [String] :object_id the Object Arnoldb ID
+    # @option values [String] :field_id the Field Arnoldb ID
+    # @option values [String] :value the value for the Field
+    # @option values [String] :effective_date the Effective Date for the Value
+    # @option values [String] :date the Create Date for the Value
+    # @option values [String] :metadata the Metadata for the Value
+    def self.get_transactions(object_id)
+      response = connection.get_transactions(Proto::Object.new(id: object_id))
+      values = []
+      p "Values: #{ response.values }"
+      p "Values: #{ response.values.first }"
+      p "Values: #{ response.values.first.object_id }"
+      p "#############"
+      response.values.each do |value|
+        p "Value: #{ value }"
+        p "Field Id: #{ value.field.id }"
+        p "objec_id: #{ value.object_id }"
+        values << {
+          object_id: value.object_id,
+          field_id: value.field.id,
+          value: value.value,
+          effective_date: value.effective_date,
+          date: value.date,
+          metadata: value.metadata
+        }
+      end
+
+      values
     end
 
     # Gets Values from Arnoldb which match the given Object Type ID, Object IDs,
