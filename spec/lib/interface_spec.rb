@@ -353,6 +353,75 @@ describe Arnoldb::Interface do
     end
   end
 
+  describe ".get_transactions" do
+    before(:all) do
+      @object_type_id = Arnoldb::Interface.create_object_type("CHICKEN")
+      @field_string = Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string])
+      @field_integer = Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer])
+      @field_float = Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float])
+      @object = Arnoldb::Interface.create_object(@object_type_id)
+    end
+
+    let(:value_set1) do
+      [{
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "John Kimble"
+      },
+      {
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_integer,
+        value: "30"
+      },
+      {
+        object_id: @object,
+        object_type_id: @object_type_id,
+        field_id: @field_float,
+        value: "0.5"
+      }]
+    end
+
+    it "gets transactions" do
+      Arnoldb::Interface.create_values(
+        value_set1,
+        Time.new(2010, 10, 9).to_i
+      )
+      expected = [
+        {
+          object_id: @object,
+          field_id: @field_string,
+          value: "John Kimble",
+          effective_date: Time.new(2010, 10, 9).to_i,
+          date: Time.now.to_i,
+          metadata: {}
+        },
+        {
+          object_id: @object,
+          field_id: @field_integer,
+          value: "30",
+          effective_date: Time.new(2010, 10, 9).to_i,
+          date: Time.now.to_i,
+          metadata: {}
+        },
+        {
+          object_id: @object,
+          field_id: @field_float,
+          value: "0.5",
+          effective_date: Time.new(2010, 10, 9).to_i,
+          date: Time.now.to_i,
+          metadata: {}
+        },
+      ]
+      p "-------"
+      p expected
+      p "-------"
+
+      expect(Arnoldb::Interface.get_transactions(@object)).to match(expected)
+    end
+  end
+
   describe ".get_values" do
     before(:all) do
       @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
