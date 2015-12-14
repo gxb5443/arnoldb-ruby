@@ -226,14 +226,8 @@ module Arnoldb
     private
 
     # Makes a connection to Arnoldb
-    #
-    # @todo make arguments for client and server addr
-    # @todo MIGHT CLEAN THIS UP?
     def self.connection
-      server = Arnoldb::Connection.connect
-      connection = server.connection
-
-      connection
+      Arnoldb.connection
     end
   end
 end

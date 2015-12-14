@@ -1,22 +1,22 @@
 module Arnoldb
+  def self.connection
+    @connection ||= Connection.new
+    @connection.client
+  end
+
+  # @return the connection to the server
+  def self.connect
+    yield connection
+  end
+
   class Connection
-    @@connection = nil
+    attr_accessor :client
 
     # CLEAN ALL OF THIS UP
     # @private
     def initialize
       @client = client
       @server_address = server_address
-    end
-
-    # @return the connection to the server
-    def self.connect
-      @@connection ||= self.new
-    end
-
-    # @todo MIGHT NEED TO MAKE THIS BETTER AND ALLOW FOR MULTIPLE CONNECTIONS?
-    def connection
-      @@connection.client
     end
 
     def client
