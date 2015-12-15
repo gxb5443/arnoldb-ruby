@@ -291,12 +291,12 @@ describe Arnoldb::Interface do
   end
 
   describe ".get_object_types" do
-     before(:all) do
-       @object_type_ids = [
-           Arnoldb::Interface.create_object_type("Profiles"),
-           Arnoldb::Interface.create_object_type("Reports"),
-           Arnoldb::Interface.create_object_type("Jobs"),
-       ]
+    before(:all) do
+      @object_type_ids = [
+        Arnoldb::Interface.create_object_type("Profiles"),
+        Arnoldb::Interface.create_object_type("Reports"),
+        Arnoldb::Interface.create_object_type("Jobs"),
+      ]
     end
 
     it "gets all object types from arnoldb" do
