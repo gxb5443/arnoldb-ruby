@@ -15,6 +15,11 @@ arnoldb:
   links:
     - db_arnoldb
 
+redis:
+  image: redis
+  ports:
+    - "6379"
+
 test:
   build: .
   dockerfile: Dockerfile-dev
@@ -23,7 +28,9 @@ test:
   volumes: 
     - .:/arnoldb_gem
   environment:
+    REDIS_URL: "redis://redis:6379"
     ARNOLDB_ADDR: arnoldb
     ARNOLDB_PORT: 8080
   links:
     - arnoldb
+    - redis

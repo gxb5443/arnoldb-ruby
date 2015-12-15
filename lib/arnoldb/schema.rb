@@ -29,13 +29,24 @@ module Arnoldb
     def self.get_id(type, title, retries: 1)
       result = nil
 
-      if type == "column"
-        table, col = title.split(".")
-        title = table.upcase + "." + col.downcase
-        result = @@fields[title]
+      if Arnoldb.configuration.redis.nil?
+        if type == "column"
+          table, col = title.split(".")
+          title = table.upcase + "." + col.downcase
+          result = @@fields[title]
+        else
+          title.upcase!
+          result = @@object_types[title]
+        end
       else
-        title.upcase!
-        result = @@object_types[title]
+        if type == "column"
+          table, col = title.split(".")
+          title = table.upcase + "." + col.downcase
+          result = Arnoldb.configuration.redis.hget("fields", title)
+        else
+          title.upcase!
+          result = Arnoldb.configuration.redis.hget("object_types", title)
+        end
       end
 
       if result.nil? && retries > 0
@@ -53,10 +64,18 @@ module Arnoldb
     #
     # @todo MAYBE CHANGE it to (arnoldb_id, table, column=nil)
     def self.get_title(type, arnoldb_id)
-      if type == "column"
-        @@field_ids[arnoldb_id]
+      if Arnoldb.configuration.redis.nil?
+        if type == "column"
+          @@field_ids[arnoldb_id]
+        else
+          @@object_type_ids[arnoldb_id]
+        end
       else
-        @@object_type_ids[arnoldb_id]
+        if type == "column"
+          Arnoldb.configuration.redis.hget("field_ids", arnoldb_id)
+        else
+          Arnoldb.configuration.redis.hget("object_type_ids", arnoldb_id)
+        end
       end
     end
 
@@ -69,7 +88,13 @@ module Arnoldb
       columns = {}
       table_name.downcase!
 
-      @@fields.each do |field, id|
+      if Arnoldb.configuration.redis.nil?
+        fields = @@fields
+      else
+        fields = Arnoldb.configuration.redis.hgetall
+      end
+
+      fields.each do |field, id|
         t, column = field.split(".")
         if t.downcase == table_name
           columns[column] = id
@@ -83,16 +108,28 @@ module Arnoldb
     def self.add_table(name, table_id)
       # @todo Change this to capitalize format names correctly
       name.upcase!
-      @@object_types[name] = table_id
-      @@object_type_ids[table_id] = name
+
+      if Arnoldb.configuration.redis.nil?
+        @@object_types[name] = table_id
+        @@object_type_ids[table_id] = name
+      else
+        Arnoldb.configuration.redis.hset("object_types", name, table_id)
+        Arnoldb.configuration.redis.hset("object_type_ids", table_id, name)
+      end
     end
 
     # Add a column to the schema cache with it's associated Arnoldb ID
     def self.add_column(name, column_id, table_id)
       table_name = self.get_title("table", table_id)
       name.downcase!
-      @@fields["#{table_name}.#{name}"] = column_id
-      @@field_ids[column_id] = "#{table_name}.#{name}"
+
+      if Arnoldb.configuration.redis.nil?
+        @@fields["#{table_name}.#{name}"] = column_id
+        @@field_ids[column_id] = "#{table_name}.#{name}"
+      else
+        Arnoldb.configuration.redis.hset("fields", "#{ table_name }.#{ name }", column_id)
+        Arnoldb.configuration.redis.hset("field_ids", column_id, "#{ table_name }.#{ name }")
+      end
     end
   end
 end
