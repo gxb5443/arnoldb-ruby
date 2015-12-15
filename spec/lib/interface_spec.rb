@@ -309,7 +309,11 @@ describe Arnoldb::Interface do
   describe ".get_field" do
     before(:all) do
       @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
-      @field_string = Arnoldb::Interface.create_field(@object_type_id, "first_name", TYPES[:string])
+      @field_string = Arnoldb::Interface.create_field(
+        @object_type_id,
+        "first_name",
+        TYPES[:string]
+      )
     end
 
     it "gets field from Arnoldb" do
