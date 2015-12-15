@@ -7,7 +7,6 @@ module Arnoldb
     # @return [String] returns the associated Arnoldb ID for the created Table
     def self.create_object_type(title)
       object_type_id = connection.set_object_type(Proto::ObjectType.new(title: title))["id"]
-      Arnoldb::Schema.add_table(title, object_type_id)
 
       object_type_id
     end
@@ -19,7 +18,6 @@ module Arnoldb
     # @return [String] returns the associated Arnoldb ID for the created Column
     def self.create_field(object_type_id, title, value_type)
       field_id = connection.set_field(Proto::Field.new(object_type_id: object_type_id, title: title, value_type: value_type))["id"]
-      Arnoldb::Schema.add_column(title, field_id, object_type_id)
 
       field_id
     end
@@ -69,7 +67,6 @@ module Arnoldb
     #
     # @todo finish ARNOLDB to allow for titles to be sent
     def self.get_object_type(title)
-      p "getting object_type"
       connection.get_object_type(Proto::ObjectType.new(title: title))[:id]
     end
 
@@ -85,6 +82,25 @@ module Arnoldb
       end
 
       object_types
+    end
+
+    # Gets a Field from its Arnoldb ID
+    # @param [String] field_id the Arnoldb ID for the Field
+    # @return [Hash] fields the Field ID, Object Type ID, title, and value type
+    # @option fields [String] :id the Arnoldb ID for a Field
+    # @option fields [String] :title the title for a Field
+    # @option fields [String] :value_type the value type for a Field
+    # @option fields [String] :object_type_id the Object Type for a Field
+    def self.get_field(field_id)
+      field = connection.get_field(Proto::Field.new(id: field_id))
+      result = {
+        id: field.id,
+        title: field.title,
+        value_type: field.value_type,
+        object_type_id: field.object_type_id
+      }
+
+      result
     end
 
     # Gets Fields for an Object Type from Arnoldb
@@ -208,14 +224,8 @@ module Arnoldb
     private
 
     # Makes a connection to Arnoldb
-    #
-    # @todo make arguments for client and server addr
-    # @todo MIGHT CLEAN THIS UP?
     def self.connection
-      server = Arnoldb::Connection.connect
-      connection = server.connection
-
-      connection
+      Arnoldb.connection
     end
   end
 end
