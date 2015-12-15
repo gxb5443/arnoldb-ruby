@@ -7,7 +7,6 @@ module Arnoldb
     # @return [String] returns the associated Arnoldb ID for the created Table
     def self.create_object_type(title)
       object_type_id = connection.set_object_type(Proto::ObjectType.new(title: title))["id"]
-      Arnoldb::Schema.add_table(title, object_type_id)
 
       object_type_id
     end
@@ -19,7 +18,6 @@ module Arnoldb
     # @return [String] returns the associated Arnoldb ID for the created Column
     def self.create_field(object_type_id, title, value_type)
       field_id = connection.set_field(Proto::Field.new(object_type_id: object_type_id, title: title, value_type: value_type))["id"]
-      Arnoldb::Schema.add_column(title, field_id, object_type_id)
 
       field_id
     end
