@@ -7,9 +7,14 @@ machine:
 dependencies:
   pre:
     - pip install -U docker-compose==1.5.1 functools32
+    - git submodule update --init --recursive
   override:
     - docker login -e="." -u=$DOCKER_USER -p=$DOCKER_PASSWORD registry.namely.tech
+    - docker-compose build
+    - docker-compose run db_arnoldb
+    - sleep 2.5
+    - docker-compose run arnoldb
 
 test:
   override:
-    - docker-compose up
+    - docker-compose run test
