@@ -22,5 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "grpc", "~> 0.11"
 
   spec.add_development_dependency "bundler", "~> 1.7"
+  spec.add_development_dependency "redis", "~> 3.2"
   spec.add_development_dependency "rspec"
 end
