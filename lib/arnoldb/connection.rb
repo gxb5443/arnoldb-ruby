@@ -1,4 +1,5 @@
 module Arnoldb
+  # @todo MIGHT NEED TO MAKE THIS BETTER AND ALLOW FOR MULTIPLE CONNECTIONS?
   def self.connection
     @connection ||= Connection.new
     @connection.client
