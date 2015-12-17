@@ -2,6 +2,13 @@ require 'colorize'
 
 module Arnoldb
   class Interface
+
+
+    attr_reader :connection
+    def initialize(connection)
+      @connection = connection
+    end
+
     # Creates a Table in Arnoldb
     # @param [String] title the title of the Table to be created
     # @return [String] returns the associated Arnoldb ID for the created Table
@@ -219,13 +226,6 @@ module Arnoldb
       end
 
       objects
-    end
-
-    private
-
-    # Makes a connection to Arnoldb
-    def self.connection
-      Arnoldb.connection
     end
   end
 end
