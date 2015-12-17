@@ -37,7 +37,7 @@ describe Arnoldb::Interface do
       @object_type_id = subject.create_object_type("Profiles")
     end
 
-    context "when correct" do
+    context "when valid" do
       it "creates a string field in arnoldb" do
         string_field = subject.create_field(
           @object_type_id,
@@ -72,7 +72,7 @@ describe Arnoldb::Interface do
       end
     end
 
-    context "when incorrect" do
+    context "when invalid" do
       let(:empty_obj_type) { subject.create_field("", "last", TYPES[:string]) }
       let(:empty_title) { subject.create_field(@object_type_id, "", TYPES[:string]) }
       let(:wrong_value_type) { subject.create_field(@object_type_id, "value", 99) }
@@ -91,54 +91,45 @@ describe Arnoldb::Interface do
     end
   end
 
-  describe ".create_object" do
+  describe "#create_object" do
     before do
       @object_type_id = subject.create_object_type("Profiles")
     end
 
-    let(:object) { subject.create_object(@object_type_id) }
-    let(:object_with_id) do
-      subject.create_object(
-        @object_type_id,
-        "b6785476-146d-43a4-a217-23e186ee7fd3"
-      )
-    end
-    let(:invalid_obj_id) do
-      subject.create_object(
-        @object_type_id,
-        "5"
-      )
-    end
-    let(:invalid_obj_type_id) do
-      subject.create_object(
-        "5",
-      )
-    end
-    let(:empty_obj_type_id) do
-      subject.create_object(
-        ""
-      )
+    context "when valid" do
+      it "creates an object in arnoldb" do
+        object = subject.create_object(@object_type_id)
+
+        expect(object).not_to eq(nil)
+        expect(object).not_to eq("")
+      end
+
+      it "creates an object in arnoldb with matching id" do
+        object_with_id = subject.create_object(
+          @object_type_id,
+          "b6785476-146d-43a4-a217-23e186ee7fd3"
+        )
+
+        expect(object_with_id).to eq("b6785476-146d-43a4-a217-23e186ee7fd3")
+      end
     end
 
-    it "creates an object in arnoldb" do
-      expect(object).not_to eq(nil)
-      expect(object).not_to eq("")
-    end
+    context "when invalid" do
+      let(:invalid_obj_id) { subject.create_object(@object_type_id, "5") }
+      let(:invalid_obj_type_id) { subject.create_object("5") }
+      let(:empty_obj_type_id) { subject.create_object("") }
 
-    it "creates an object in arnoldb with matching id" do
-      expect(object_with_id).to eq("b6785476-146d-43a4-a217-23e186ee7fd3")
-    end
+      it "raises an error for invalid object id" do
+        expect { invalid_obj_id }.to raise_error(/Not a valid uuid/)
+      end
 
-    it "raises an error for invalid object id" do
-      expect { invalid_obj_id }.to raise_error(/Not a valid uuid/)
-    end
+      it "raises an error for invalid object type id" do
+        expect { invalid_obj_type_id }.to raise_error(/Not a valid uuid/)
+      end
 
-    it "raises an error for invalid object type id" do
-      expect { invalid_obj_type_id }.to raise_error(/Not a valid uuid/)
-    end
-
-    it "raises an error for empty object type id" do
-      expect { empty_obj_type_id }.to raise_error(/Not a valid uuid/)
+      it "raises an error for empty object type id" do
+        expect { empty_obj_type_id }.to raise_error(/Not a valid uuid/)
+      end
     end
   end
 
