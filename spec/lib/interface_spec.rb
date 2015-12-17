@@ -147,19 +147,19 @@ describe Arnoldb::Interface do
       it "creates current values in arnoldb" do
         expected = []
         values = [{
-          object_id: object,
+          object_id: @object,
           object_type_id: @object_type_id,
           field_id: @field_string,
           value: "John Kimble"
         },
         {
-          object_id: object,
+          object_id: @object,
           object_type_id: @object_type_id,
           field_id: @field_integer,
           value: "30"
         },
         {
-          object_id: object,
+          object_id: @object,
           object_type_id: @object_type_id,
           field_id: @field_float,
           value: "0.5"
@@ -175,19 +175,19 @@ describe Arnoldb::Interface do
       it "creates past values in arnoldb" do
         expected = []
         values = [{
-          object_id: object,
+          object_id: @object,
           object_type_id: @object_type_id,
           field_id: @field_string,
           value: "old John Kimble"
         },
         {
-          object_id: object,
+          object_id: @object,
           object_type_id: @object_type_id,
           field_id: @field_integer,
           value: "3000"
         },
         {
-          object_id: object,
+          object_id: @object,
           object_type_id: @object_type_id,
           field_id: @field_float,
           value: "9.81"
@@ -206,19 +206,19 @@ describe Arnoldb::Interface do
       it "creates future values in arnoldb" do
         expected = []
         values = [{
-          object_id: object,
+          object_id: @object,
           object_type_id: @object_type_id,
           field_id: @field_string,
           value: "terminator"
         },
         {
-          object_id: object,
+          object_id: @object,
           object_type_id: @object_type_id,
           field_id: @field_integer,
           value: "-2000"
         },
         {
-          object_id: object,
+          object_id: @object,
           object_type_id: @object_type_id,
           field_id: @field_float,
           value: "3.14"
@@ -249,7 +249,7 @@ describe Arnoldb::Interface do
       let(:bad_obj_type_id) do
         subject.create_values(
           [{
-            object_id: object,
+            object_id: @object,
             object_type_id: "",
             field_id: @field_string,
             value: "empty_obj_type_id"
@@ -259,7 +259,7 @@ describe Arnoldb::Interface do
       let(:bad_field_id) do
         subject.create_values(
           [{
-            object_id: object,
+            object_id: @object,
             object_type_id: @object_type_id,
             field_id: "",
             value: "empty_field_id"
@@ -282,7 +282,7 @@ describe Arnoldb::Interface do
   end
 
   # TODO NEED TO FIGURE OUT HOW GET_OBJECT_TYPE SHOULD FUNCTION
-  describe ".get_object_type" do
+  describe "#get_object_type" do
     before do
       @object_type_id = subject.create_object_type("Profiles")
     end
@@ -300,19 +300,23 @@ describe Arnoldb::Interface do
     end
   end
 
-  describe ".get_object_types" do
-    before do
-      @object_type_ids = [
-        subject.create_object_type("Profiles"),
-        subject.create_object_type("Reports"),
-        subject.create_object_type("Jobs"),
-      ]
-    end
-
+  describe "#get_object_types" do
     it "gets all object types from arnoldb" do
+      object_type_ids = [{
+        id: subject.create_object_type("Profiles"),
+        title: "Profiles"
+      },
+      {
+        id: subject.create_object_type("Reports"),
+        title: "Reports"
+      },
+      {
+        id: subject.create_object_type("Jobs"),
+        title: "Jobs"
+      }]
       result = subject.get_all_object_types
 
-      expect(result).to include(*@object_types_ids)
+      expect(result).to include(*object_type_ids)
     end
   end
 
