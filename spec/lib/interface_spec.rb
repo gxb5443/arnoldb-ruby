@@ -14,14 +14,15 @@ COP = {
 }
 
 describe Arnoldb::Interface do
-  let(:connection) { Arnoldb::connect(ENV['TEST_ARNOLDB_ADDRESS']) }
+  let(:connection) { Arnoldb.connect(ENV['TEST_ARNOLDB_ADDRESS']) }
 
   subject { Arnoldb::Interface.new(connection) }
   describe ".create_object_type" do
-    let(:object_type_id) { subject.create_object_type("Profiles") }
     let(:empty) { subject.create_object_type("") }
 
     it "creates an object type in arnoldb" do
+      object_type_id = subject.create_object_type("Profiles")
+
       expect(object_type_id).not_to eq(nil)
       expect(object_type_id).not_to eq("")
     end
@@ -215,15 +216,6 @@ describe Arnoldb::Interface do
         value: "empty_field_id"
       }]
     end
-    let(:current_values) do
-      subject.create_values(value_set1)
-    end
-    let(:past_values) do
-      subject.create_values(value_set2, Time.new(2010, 10, 10).to_i)
-    end
-    let(:future_values) do
-      subject.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
-    end
     let(:bad_obj_id) do
       subject.create_values(empty_obj_id)
     end
@@ -239,6 +231,7 @@ describe Arnoldb::Interface do
       value_set1.each do |value|
         expected << { id: value[:object_id], value: value[:value] }
       end
+      current_values = subject.create_values(value_set1)
 
       expect(current_values).to match_array(expected)
     end
@@ -248,8 +241,7 @@ describe Arnoldb::Interface do
       value_set2.each do |value|
         expected << { id: value[:object_id], value: value[:value] }
       end
-
-
+      past_values = subject.create_values(value_set2, Time.new(2010, 10, 10).to_i)
 
       expect(past_values).to match_array(expected)
     end
@@ -259,6 +251,7 @@ describe Arnoldb::Interface do
       value_set3.each do |value|
         expected << { id: value[:object_id], value: value[:value] }
       end
+      future_values = subject.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
 
       expect(future_values).to match_array(expected)
     end
@@ -433,17 +426,6 @@ describe Arnoldb::Interface do
         value: "3.14"
       }]
     end
-    let(:current_values) do
-      subject.get_values(@object_type_id, @objects, @fields)
-    end
-    let(:future_values) do
-      subject.get_values(
-        @object_type_id,
-        @objects,
-        @fields,
-        (Time.now + (3600 * 24 * 365)).to_i
-      )
-    end
     let(:empty_object_type_id) do
       subject.get_values(
         "",
@@ -479,6 +461,7 @@ describe Arnoldb::Interface do
         expected << { id: value[:object_id], value: value[:value] }
       end
       subject.create_values(value_set1)
+      current_values = subject.get_values(@object_type_id, @objects, @fields)
 
       expect(current_values).to match_array(expected)
     end
@@ -492,7 +475,6 @@ describe Arnoldb::Interface do
         value_set2,
         Time.new(2010, 10, 9).to_i
       )
-
       past_values = subject.get_values(
         @object_type_id,
         @objects,
@@ -511,6 +493,12 @@ describe Arnoldb::Interface do
       subject.create_values(
         value_set3,
         (Time.now + (3600 * 24 * 366)).to_i
+      )
+      future_values = subject.get_values(
+        @object_type_id,
+        @objects,
+        @fields,
+        (Time.now + (3600 * 24 * 365)).to_i
       )
 
       expect(future_values).to match_array(expected)
@@ -602,12 +590,12 @@ describe Arnoldb::Interface do
         value: "3.14"
       }]
     end
-    let(:past_values) do
-      subject.create_values(value_set2, Time.new(2010, 10, 10).to_i)
-    end
-    let(:future_values) do
-      subject.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
-    end
+    # let(:past_values) do
+    #   subject.create_values(value_set2, Time.new(2010, 10, 10).to_i)
+    # end
+    # let(:future_values) do
+    #   subject.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
+    # end
     let(:bad_operator) do
       subject.get_objects(
         @object_type_id,
@@ -639,10 +627,10 @@ describe Arnoldb::Interface do
       )
     end
 
-    xit "gets objects from arnoldb" do
+    it "gets current objects from arnoldb" do
       subject.create_values(value_set1)
 
-      result = subject.get_objects(
+      result_objects = subject.get_objects(
         @object_type_id,
         [{
           field_id: @field_string,
@@ -650,16 +638,12 @@ describe Arnoldb::Interface do
           operator: COP[:EQ]
         }]
       )
-      expected = {
-        id: @obj_1,
-        object_type_id: @object_type_id,
-        values: {
-          field_id: @field_string,
-          value: ""
-        }
-      }
+      result_object_ids = []
+      result_objects.each do |object|
+        result_object_ids << object[:id]
+      end
 
-      expect(result).to include(@obj_1)
+      expect(result_object_ids).to include(@obj_1)
     end
 
     it "raises an error with empty object_type_id" do
