@@ -162,24 +162,26 @@ describe Arnoldb::Interface do
     context "when valid" do
       it "creates current values in arnoldb" do
         expected = []
-        values = [{
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_string,
-          value: "John Kimble"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_integer,
-          value: "30"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_float,
-          value: "0.5"
-        }]
+        values = [
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_string,
+            value: "John Kimble"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_integer,
+            value: "30"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_float,
+            value: "0.5"
+          }
+        ]
         values.each do |value|
           expected << { id: value[:object_id], value: value[:value] }
         end
@@ -190,24 +192,26 @@ describe Arnoldb::Interface do
 
       it "creates past values in arnoldb" do
         expected = []
-        values = [{
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_string,
-          value: "old John Kimble"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_integer,
-          value: "3000"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_float,
-          value: "9.81"
-        }]
+        values = [
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_string,
+            value: "old John Kimble"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_integer,
+            value: "3000"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_float,
+            value: "9.81"
+          }
+        ]
         values.each do |value|
           expected << { id: value[:object_id], value: value[:value] }
         end
@@ -221,24 +225,26 @@ describe Arnoldb::Interface do
 
       it "creates future values in arnoldb" do
         expected = []
-        values = [{
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_string,
-          value: "terminator"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_integer,
-          value: "-2000"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_float,
-          value: "3.14"
-        }]
+        values = [
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_string,
+            value: "terminator"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_integer,
+            value: "-2000"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_float,
+            value: "3.14"
+          }
+        ]
         values.each do |value|
           expected << { id: value[:object_id], value: value[:value] }
         end
@@ -288,8 +294,8 @@ describe Arnoldb::Interface do
       end
 
       it "raises error for object type id" do
-        expect { bad_obj_type_id }
-          .to raise_error(/Field not associated with given Object Type/)
+        expect { bad_obj_type_id }.
+          to raise_error(/Field not associated with given Object Type/)
       end
 
       it "raises error for field id" do
@@ -417,24 +423,26 @@ describe Arnoldb::Interface do
 
     context "when valid" do
       it "gets current values from arnoldb" do
-        values = [{
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_string,
-          value: "John Kimble"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_integer,
-          value: "30"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_float,
-          value: "0.5"
-        }]
+        values = [
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_string,
+            value: "John Kimble"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_integer,
+            value: "30"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_float,
+            value: "0.5"
+          }
+        ]
         expected = []
         values.each do |value|
           expected << { id: value[:object_id], value: value[:value] }
@@ -446,24 +454,26 @@ describe Arnoldb::Interface do
       end
 
       it "gets past values from arnoldb" do
-        values = [{
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_string,
-          value: "old John Kimble"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_integer,
-          value: "3000"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_float,
-          value: "9.81"
-        }]
+        values = [
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_string,
+            value: "old John Kimble"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_integer,
+            value: "3000"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_float,
+            value: "9.81"
+          }
+        ]
         expected = []
         values.each do |value|
           expected << { id: value[:object_id], value: value[:value] }
@@ -483,24 +493,26 @@ describe Arnoldb::Interface do
       end
 
       it "gets future values from arnoldb" do
-        values = [{
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_string,
-          value: "terminator"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_integer,
-          value: "-2000"
-        },
-        {
-          object_id: @object,
-          object_type_id: @object_type_id,
-          field_id: @field_float,
-          value: "3.14"
-        }]
+        values = [
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_string,
+            value: "terminator"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_integer,
+            value: "-2000"
+          },
+          {
+            object_id: @object,
+            object_type_id: @object_type_id,
+            field_id: @field_float,
+            value: "3.14"
+          }
+        ]
         expected = []
         values.each do |value|
           expected << { id: value[:object_id], value: value[:value] }
@@ -545,7 +557,7 @@ describe Arnoldb::Interface do
       let(:one_empty_object_id) do
         subject.get_values(
           @object_type_id,
-          [@object,""],
+          [@object, ""],
           @fields
         )
       end
@@ -590,24 +602,26 @@ describe Arnoldb::Interface do
     end
 
     let(:values) do
-      [{
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_string,
-        value: "John Kimble"
-      },
-      {
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_integer,
-        value: "30"
-      },
-      {
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_float,
-        value: "0.5"
-      }]
+      [
+        {
+          object_id: @obj_1,
+          object_type_id: @object_type_id,
+          field_id: @field_string,
+          value: "John Kimble"
+        },
+        {
+          object_id: @obj_1,
+          object_type_id: @object_type_id,
+          field_id: @field_integer,
+          value: "30"
+        },
+        {
+          object_id: @obj_1,
+          object_type_id: @object_type_id,
+          field_id: @field_float,
+          value: "0.5"
+        }
+      ]
     end
     context "when valid" do
       it "gets current objects from arnoldb" do
