@@ -11,9 +11,9 @@ dependencies:
   override:
     - docker login -e="." -u=$DOCKER_USER -p=$DOCKER_PASSWORD registry.namely.tech
     - docker-compose build
-    - docker-compose start db_arnoldb
-    - sleep 5
-    - docker-compose start arnoldb
+    - docker-compose up -d db_arnoldb
+    - sleep 2
+    - docker-compose up -d arnoldb
 
 test:
   override:
