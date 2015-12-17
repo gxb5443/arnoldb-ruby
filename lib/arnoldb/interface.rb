@@ -10,7 +10,7 @@ module Arnoldb
     # Creates a Table in Arnoldb
     # @param [String] title the title of the Table to be created
     # @return [String] returns the associated Arnoldb ID for the created Table
-    def self.create_object_type(title)
+    def create_object_type(title)
       object_type_id = connection.set_object_type(Proto::ObjectType.new(title: title))["id"]
 
       object_type_id
@@ -21,7 +21,7 @@ module Arnoldb
     # @param [String] title the title of the Column to be created
     # @param [String] value_type the data type for the Column
     # @return [String] returns the associated Arnoldb ID for the created Column
-    def self.create_field(object_type_id, title, value_type)
+    def create_field(object_type_id, title, value_type)
       field_id = connection.set_field(Proto::Field.new(object_type_id: object_type_id, title: title, value_type: value_type))["id"]
 
       field_id
@@ -32,7 +32,7 @@ module Arnoldb
     # @param [String] object_id the Object's Arnoldb ID used for setting during
     # migrations
     # @return [String] returns the associated Arnoldb ID for the created Object
-    def self.create_object(object_type_id, object_id = "")
+    def create_object(object_type_id, object_id = "")
       response = connection.set_object(Proto::Object.new(object_type_id: object_type_id, id: object_id))["id"]
 
       response
@@ -50,7 +50,7 @@ module Arnoldb
     # in Arnoldb
     # @option objects [String] :id the Arnoldb ID for an Object
     # @option objects [String] :value the value assigned to an Object
-    def self.create_values(values, effective_date = 0)
+    def create_values(values, effective_date = 0)
       values_messages = []
       values.each do |value|
         field = Proto::Field.new(id: value[:field_id], object_type_id: value[:object_type_id])
@@ -71,7 +71,7 @@ module Arnoldb
     # @return [String, nil] the Arnoldb ID for the Object Type if found
     #
     # @todo finish ARNOLDB to allow for titles to be sent
-    def self.get_object_type(title)
+    def get_object_type(title)
       connection.get_object_type(Proto::ObjectType.new(title: title))[:id]
     end
 
@@ -79,7 +79,7 @@ module Arnoldb
     # @return [Array<Hash>] object_types the Object Type IDs and titles
     # @option object_types [String] :id the Arnoldb ID for an Object Type
     # @option object_types [String] :title the title for an Object Type
-    def self.get_all_object_types
+    def get_all_object_types
       object_types = []
       response = connection.get_all_object_types(Proto::Empty.new)
       response.object_types.each do |object_type|
@@ -96,7 +96,7 @@ module Arnoldb
     # @option fields [String] :title the title for a Field
     # @option fields [String] :value_type the value type for a Field
     # @option fields [String] :object_type_id the Object Type for a Field
-    def self.get_field(field_id)
+    def get_field(field_id)
       field = connection.get_field(Proto::Field.new(id: field_id))
       result = {
         id: field.id,
@@ -114,7 +114,7 @@ module Arnoldb
     # @option fields [String] :id the Arnoldb ID for a Field
     # @option fields [String] :title the title for a Field
     # @option fields [String] :value_type the value type for a Field
-    def self.get_fields(object_type_id)
+    def get_fields(object_type_id)
       fields = []
       response = connection.get_fields(Proto::ObjectType.new(id: object_type_id))
       response.fields.each do |field|
@@ -132,7 +132,7 @@ module Arnoldb
     # @param [DateTime] date the date for what version of the Values being
     # queried
     # @return [Array<Hash>] Values for the desired Objects and Fields
-    def self.get_values(object_type_id, object_ids, field_ids, date = 0)
+    def get_values(object_type_id, object_ids, field_ids, date = 0)
       objects = []
       object_ids.each do |object_id|
         objects << Proto::Object.new(id: object_id)
@@ -165,7 +165,7 @@ module Arnoldb
     # @param [DateTime] date the date for what version of the Objects being
     # queried
     # @return [Array<Hash>] Objects which satisfy the clauses
-    def self.get_objects(object_type_id, clauses, date = 0)
+    def get_objects(object_type_id, clauses, date = 0)
       if clauses.count > 1
         leaves = []
         clauses.each do |clause|

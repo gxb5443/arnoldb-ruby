@@ -14,9 +14,12 @@ COP = {
 }
 
 describe Arnoldb::Interface do
+  let(:connection) { Arnoldb::connect(ENV['TEST_ARNOLDB_ADDRESS']) }
+
+  subject { Arnoldb::Interface.new(connection) }
   describe ".create_object_type" do
-    let(:object_type_id) { Arnoldb::Interface.create_object_type("Profiles") }
-    let(:empty) { Arnoldb::Interface.create_object_type("") }
+    let(:object_type_id) { subject.create_object_type("Profiles") }
+    let(:empty) { subject.create_object_type("") }
 
     it "creates an object type in arnoldb" do
       expect(object_type_id).not_to eq(nil)
@@ -29,16 +32,16 @@ describe Arnoldb::Interface do
   end
 
   describe ".create_field" do
-    before(:all) do
-      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
+    before do
+      @object_type_id = subject.create_object_type("Profiles")
     end
 
-    let(:string_field) { Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string]) }
-    let(:integer_field) { Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer]) }
-    let(:float_field) { Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float]) }
-    let(:empty_obj_type) { Arnoldb::Interface.create_field("", "last", TYPES[:string]) }
-    let(:empty_title) { Arnoldb::Interface.create_field(@object_type_id, "", TYPES[:string]) }
-    let(:wrong_value_type) { Arnoldb::Interface.create_field(@object_type_id, "value", 99) }
+    let(:string_field) { subject.create_field(@object_type_id, "name", TYPES[:string]) }
+    let(:integer_field) { subject.create_field(@object_type_id, "age", TYPES[:integer]) }
+    let(:float_field) { subject.create_field(@object_type_id, "modifier", TYPES[:float]) }
+    let(:empty_obj_type) { subject.create_field("", "last", TYPES[:string]) }
+    let(:empty_title) { subject.create_field(@object_type_id, "", TYPES[:string]) }
+    let(:wrong_value_type) { subject.create_field(@object_type_id, "value", 99) }
 
     it "creates a string field in arnoldb" do
       expect(string_field).not_to eq(nil)
@@ -69,30 +72,30 @@ describe Arnoldb::Interface do
   end
 
   describe ".create_object" do
-    before(:all) do
-      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
+    before do
+      @object_type_id = subject.create_object_type("Profiles")
     end
 
-    let(:object) { Arnoldb::Interface.create_object(@object_type_id) }
+    let(:object) { subject.create_object(@object_type_id) }
     let(:object_with_id) do
-      Arnoldb::Interface.create_object(
+      subject.create_object(
         @object_type_id,
         "b6785476-146d-43a4-a217-23e186ee7fd3"
       )
     end
     let(:invalid_obj_id) do
-      Arnoldb::Interface.create_object(
+      subject.create_object(
         @object_type_id,
         "5"
       )
     end
     let(:invalid_obj_type_id) do
-      Arnoldb::Interface.create_object(
+      subject.create_object(
         "5",
       )
     end
     let(:empty_obj_type_id) do
-      Arnoldb::Interface.create_object(
+      subject.create_object(
         ""
       )
     end
@@ -120,14 +123,14 @@ describe Arnoldb::Interface do
   end
 
   describe ".create_values" do
-    before(:all) do
-      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
-      @field_string = Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string])
-      @field_integer = Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer])
-      @field_float = Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float])
+    before do
+      @object_type_id = subject.create_object_type("Profiles")
+      @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
+      @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
+      @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
     end
 
-    let(:object) { Arnoldb::Interface.create_object(@object_type_id) }
+    let(:object) { subject.create_object(@object_type_id) }
     let(:value_set1) do
       [{
         object_id: object,
@@ -213,22 +216,22 @@ describe Arnoldb::Interface do
       }]
     end
     let(:current_values) do
-      Arnoldb::Interface.create_values(value_set1)
+      subject.create_values(value_set1)
     end
     let(:past_values) do
-      Arnoldb::Interface.create_values(value_set2, Time.new(2010, 10, 10).to_i)
+      subject.create_values(value_set2, Time.new(2010, 10, 10).to_i)
     end
     let(:future_values) do
-      Arnoldb::Interface.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
+      subject.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
     end
     let(:bad_obj_id) do
-      Arnoldb::Interface.create_values(empty_obj_id)
+      subject.create_values(empty_obj_id)
     end
     let(:bad_obj_type_id) do
-      Arnoldb::Interface.create_values(empty_obj_type_id)
+      subject.create_values(empty_obj_type_id)
     end
     let(:bad_field_id) do
-      Arnoldb::Interface.create_values(empty_field_id)
+      subject.create_values(empty_field_id)
     end
 
     it "creates current values in arnoldb" do
@@ -273,43 +276,43 @@ describe Arnoldb::Interface do
 
   # TODO NEED TO FIGURE OUT HOW GET_OBJECT_TYPE SHOULD FUNCTION
   describe ".get_object_type" do
-    before(:all) do
-      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
+    before do
+      @object_type_id = subject.create_object_type("Profiles")
     end
 
     xit "gets an object type from arnoldb" do
-      result = Arnoldb::Interface.get_object_type("Profiles")
+      result = subject.get_object_type("Profiles")
 
       expect(result).to eq(@object_type_id)
     end
 
     xit "gets an object type from arnoldb" do
-      result = Arnoldb::Interface.get_object_type("")
+      result = subject.get_object_type("")
 
       expect(result).to eq("")
     end
   end
 
   describe ".get_object_types" do
-    before(:all) do
+    before do
       @object_type_ids = [
-        Arnoldb::Interface.create_object_type("Profiles"),
-        Arnoldb::Interface.create_object_type("Reports"),
-        Arnoldb::Interface.create_object_type("Jobs"),
+        subject.create_object_type("Profiles"),
+        subject.create_object_type("Reports"),
+        subject.create_object_type("Jobs"),
       ]
     end
 
     it "gets all object types from arnoldb" do
-      result = Arnoldb::Interface.get_all_object_types
+      result = subject.get_all_object_types
 
       expect(result).to include(*@object_types_ids)
     end
   end
 
   describe ".get_field" do
-    before(:all) do
-      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
-      @field_string = Arnoldb::Interface.create_field(
+    before do
+      @object_type_id = subject.create_object_type("Profiles")
+      @field_string = subject.create_field(
         @object_type_id,
         "first_name",
         TYPES[:string]
@@ -323,18 +326,18 @@ describe Arnoldb::Interface do
         title: "first_name",
         value_type: :STRING
       }
-      result = Arnoldb::Interface.get_field(@field_string)
+      result = subject.get_field(@field_string)
 
       expect(result).to match(expected)
     end
   end
 
   describe ".get_fields" do
-    before(:all) do
-      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
-      @field_string = Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string])
-      @field_integer = Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer])
-      @field_float = Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float])
+    before do
+      @object_type_id = subject.create_object_type("Profiles")
+      @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
+      @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
+      @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
     end
 
     let(:fields) do
@@ -344,10 +347,10 @@ describe Arnoldb::Interface do
         { id: @field_float, title: "modifier", value_type: :FLOAT32 }
       ]
     end
-    let(:bad_obj_type_id) { Arnoldb::Interface.get_fields("") }
+    let(:bad_obj_type_id) { subject.get_fields("") }
 
     it "gets fields from arnoldb" do
-      result = Arnoldb::Interface.get_fields(@object_type_id)
+      result = subject.get_fields(@object_type_id)
 
       expect(result).to match_array(fields)
     end
@@ -358,12 +361,12 @@ describe Arnoldb::Interface do
   end
 
   describe ".get_values" do
-    before(:all) do
-      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
-      @field_string = Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string])
-      @field_integer = Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer])
-      @field_float = Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float])
-      @object = Arnoldb::Interface.create_object(@object_type_id)
+    before do
+      @object_type_id = subject.create_object_type("Profiles")
+      @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
+      @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
+      @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
+      @object = subject.create_object(@object_type_id)
       @fields =  [@field_string, @field_integer, @field_float]
       @objects = [@object]
     end
@@ -429,10 +432,10 @@ describe Arnoldb::Interface do
       }]
     end
     let(:current_values) do
-      Arnoldb::Interface.get_values(@object_type_id, @objects, @fields)
+      subject.get_values(@object_type_id, @objects, @fields)
     end
     let(:past_values) do
-      Arnoldb::Interface.get_values(
+      subject.get_values(
         @object_type_id,
         @objects,
         @fields,
@@ -440,7 +443,7 @@ describe Arnoldb::Interface do
       )
     end
     let(:future_values) do
-      Arnoldb::Interface.get_values(
+      subject.get_values(
         @object_type_id,
         @objects,
         @fields,
@@ -448,28 +451,28 @@ describe Arnoldb::Interface do
       )
     end
     let(:empty_object_type_id) do
-      Arnoldb::Interface.get_values(
+      subject.get_values(
         "",
         @objects,
         @fields
       )
     end
     let(:empty_object_id) do
-      Arnoldb::Interface.get_values(
+      subject.get_values(
         @object_type_id,
         [""],
         @fields
       )
     end
     let(:empty_field_id) do
-      Arnoldb::Interface.get_values(
+      subject.get_values(
         @object_type_id,
         @objects,
         [""]
       )
     end
     let(:one_empty_object_id) do
-      Arnoldb::Interface.get_values(
+      subject.get_values(
         @object_type_id,
         [@object,""],
         @fields
@@ -481,7 +484,7 @@ describe Arnoldb::Interface do
       value_set1.each do |value|
         expected << { id: value[:object_id], value: value[:value] }
       end
-      Arnoldb::Interface.create_values(value_set1)
+      subject.create_values(value_set1)
 
       expect(current_values).to match_array(expected)
     end
@@ -491,7 +494,7 @@ describe Arnoldb::Interface do
       value_set2.each do |value|
         expected << { id: value[:object_id], value: value[:value] }
       end
-      Arnoldb::Interface.create_values(
+      subject.create_values(
         value_set2,
         Time.new(2010, 10, 9).to_i
       )
@@ -504,7 +507,7 @@ describe Arnoldb::Interface do
       value_set3.each do |value|
         expected << { id: value[:object_id], value: value[:value] }
       end
-      Arnoldb::Interface.create_values(
+      subject.create_values(
         value_set3,
         (Time.now + (3600 * 24 * 366)).to_i
       )
@@ -530,12 +533,12 @@ describe Arnoldb::Interface do
   end
 
   describe ".get_objects" do
-    before(:all) do
-      @object_type_id = Arnoldb::Interface.create_object_type("Profiles")
-      @field_string = Arnoldb::Interface.create_field(@object_type_id, "name", TYPES[:string])
-      @field_integer = Arnoldb::Interface.create_field(@object_type_id, "age", TYPES[:integer])
-      @field_float = Arnoldb::Interface.create_field(@object_type_id, "modifier", TYPES[:float])
-      @obj_1 = Arnoldb::Interface.create_object(@object_type_id)
+    before do
+      @object_type_id = subject.create_object_type("Profiles")
+      @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
+      @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
+      @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
+      @obj_1 = subject.create_object(@object_type_id)
     end
 
     let(:value_set1) do
@@ -599,13 +602,13 @@ describe Arnoldb::Interface do
       }]
     end
     let(:past_values) do
-      Arnoldb::Interface.create_values(value_set2, Time.new(2010, 10, 10).to_i)
+      subject.create_values(value_set2, Time.new(2010, 10, 10).to_i)
     end
     let(:future_values) do
-      Arnoldb::Interface.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
+      subject.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
     end
     let(:bad_operator) do
-      Arnoldb::Interface.get_objects(
+      subject.get_objects(
         @object_type_id,
         [{
           field_id: @field_string,
@@ -615,7 +618,7 @@ describe Arnoldb::Interface do
       )
     end
     let(:bad_obj_type_id) do
-      Arnoldb::Interface.get_objects(
+      subject.get_objects(
         "",
         [{
           field_id: @field_string,
@@ -625,7 +628,7 @@ describe Arnoldb::Interface do
       )
     end
     let(:bad_field_id) do
-      Arnoldb::Interface.get_objects(
+      subject.get_objects(
         @object_type_id,
         [{
           field_id: "",
@@ -636,9 +639,9 @@ describe Arnoldb::Interface do
     end
 
     xit "gets objects from arnoldb" do
-      Arnoldb::Interface.create_values(value_set1)
+      subject.create_values(value_set1)
 
-      result = Arnoldb::Interface.get_objects(
+      result = subject.get_objects(
         @object_type_id,
         [{
           field_id: @field_string,
@@ -659,19 +662,19 @@ describe Arnoldb::Interface do
     end
 
     it "raises an error with empty object_type_id" do
-      Arnoldb::Interface.create_values(value_set1)
+      subject.create_values(value_set1)
 
       expect { bad_obj_type_id }.to raise_error(/Not a valid uuid/)
     end
 
     it "raises an error with empty field_id" do
-      Arnoldb::Interface.create_values(value_set1)
+      subject.create_values(value_set1)
 
       expect { bad_field_id }.to raise_error(/Not a valid uuid/)
     end
 
     it "raises an error with empty operator" do
-      Arnoldb::Interface.create_values(value_set1)
+      subject.create_values(value_set1)
 
       expect { bad_operator }.to raise_error(/Not a valid operator/)
     end

@@ -23,7 +23,6 @@ test:
   volumes: 
     - .:/arnoldb_gem
   environment:
-    ARNOLDB_ADDR: arnoldb
-    ARNOLDB_PORT: 8080
+    TEST_ARNOLDB_ADDRESS: 'arnoldb:8080'
   links:
     - arnoldb
