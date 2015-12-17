@@ -363,7 +363,7 @@ describe Arnoldb::Interface do
     end
   end
 
-  describe ".get_values" do
+  describe "#get_values" do
     before do
       @object_type_id = subject.create_object_type("Profiles")
       @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
@@ -374,66 +374,112 @@ describe Arnoldb::Interface do
       @objects = [@object]
     end
 
-    let(:value_set1) do
-      [{
-        object_id: @object,
-        object_type_id: @object_type_id,
-        field_id: @field_string,
-        value: "John Kimble"
-      },
-      {
-        object_id: @object,
-        object_type_id: @object_type_id,
-        field_id: @field_integer,
-        value: "30"
-      },
-      {
-        object_id: @object,
-        object_type_id: @object_type_id,
-        field_id: @field_float,
-        value: "0.5"
-      }]
+    context "when valid" do
+      it "gets current values from arnoldb" do
+        values = [{
+          object_id: @object,
+          object_type_id: @object_type_id,
+          field_id: @field_string,
+          value: "John Kimble"
+        },
+        {
+          object_id: @object,
+          object_type_id: @object_type_id,
+          field_id: @field_integer,
+          value: "30"
+        },
+        {
+          object_id: @object,
+          object_type_id: @object_type_id,
+          field_id: @field_float,
+          value: "0.5"
+        }]
+        expected = []
+        values.each do |value|
+          expected << { id: value[:object_id], value: value[:value] }
+        end
+        subject.create_values(values)
+        current_values = subject.get_values(@object_type_id, @objects, @fields)
+
+        expect(current_values).to match_array(expected)
+      end
+
+      it "gets past values from arnoldb" do
+        values = [{
+          object_id: @object,
+          object_type_id: @object_type_id,
+          field_id: @field_string,
+          value: "old John Kimble"
+        },
+        {
+          object_id: @object,
+          object_type_id: @object_type_id,
+          field_id: @field_integer,
+          value: "3000"
+        },
+        {
+          object_id: @object,
+          object_type_id: @object_type_id,
+          field_id: @field_float,
+          value: "9.81"
+        }]
+        expected = []
+        values.each do |value|
+          expected << { id: value[:object_id], value: value[:value] }
+        end
+        subject.create_values(
+          values,
+          Time.new(2010, 10, 9).to_i
+        )
+        past_values = subject.get_values(
+          @object_type_id,
+          @objects,
+          @fields,
+          Time.new(2012, 10, 10).to_i
+        )
+
+        expect(past_values).to match_array(expected)
+      end
+
+      it "gets future values from arnoldb" do
+        values = [{
+          object_id: @object,
+          object_type_id: @object_type_id,
+          field_id: @field_string,
+          value: "terminator"
+        },
+        {
+          object_id: @object,
+          object_type_id: @object_type_id,
+          field_id: @field_integer,
+          value: "-2000"
+        },
+        {
+          object_id: @object,
+          object_type_id: @object_type_id,
+          field_id: @field_float,
+          value: "3.14"
+        }]
+        expected = []
+        values.each do |value|
+          expected << { id: value[:object_id], value: value[:value] }
+        end
+        subject.create_values(
+          values,
+          (Time.now + (3600 * 24 * 366)).to_i
+        )
+        future_values = subject.get_values(
+          @object_type_id,
+          @objects,
+          @fields,
+          (Time.now + (3600 * 24 * 365)).to_i
+        )
+
+        expect(future_values).to match_array(expected)
+      end
     end
-    let(:value_set2) do
-      [{
-        object_id: @object,
-        object_type_id: @object_type_id,
-        field_id: @field_string,
-        value: "old John Kimble"
-      },
-      {
-        object_id: @object,
-        object_type_id: @object_type_id,
-        field_id: @field_integer,
-        value: "3000"
-      },
-      {
-        object_id: @object,
-        object_type_id: @object_type_id,
-        field_id: @field_float,
-        value: "9.81"
-      }]
-    end
-    let(:value_set3) do
-      [{
-        object_id: @object,
-        object_type_id: @object_type_id,
-        field_id: @field_string,
-        value: "terminator"
-      },
-      {
-        object_id: @object,
-        object_type_id: @object_type_id,
-        field_id: @field_integer,
-        value: "-2000"
-      },
-      {
-        object_id: @object,
-        object_type_id: @object_type_id,
-        field_id: @field_float,
-        value: "3.14"
-      }]
-    end
+
+  context "when invalid" do
     let(:empty_object_type_id) do
       subject.get_values(
         "",
@@ -463,55 +509,6 @@ describe Arnoldb::Interface do
       )
     end
 
-    it "gets current values from arnoldb" do
-      expected = []
-      value_set1.each do |value|
-        expected << { id: value[:object_id], value: value[:value] }
-      end
-      subject.create_values(value_set1)
-      current_values = subject.get_values(@object_type_id, @objects, @fields)
-
-      expect(current_values).to match_array(expected)
-    end
-
-    it "gets past values from arnoldb" do
-      expected = []
-      value_set2.each do |value|
-        expected << { id: value[:object_id], value: value[:value] }
-      end
-      subject.create_values(
-        value_set2,
-        Time.new(2010, 10, 9).to_i
-      )
-      past_values = subject.get_values(
-        @object_type_id,
-        @objects,
-        @fields,
-        Time.new(2012, 10, 10).to_i
-      )
-
-      expect(past_values).to match_array(expected)
-    end
-
-    it "gets future values from arnoldb" do
-      expected = []
-      value_set3.each do |value|
-        expected << { id: value[:object_id], value: value[:value] }
-      end
-      subject.create_values(
-        value_set3,
-        (Time.now + (3600 * 24 * 366)).to_i
-      )
-      future_values = subject.get_values(
-        @object_type_id,
-        @objects,
-        @fields,
-        (Time.now + (3600 * 24 * 365)).to_i
-      )
-
-      expect(future_values).to match_array(expected)
-    end
-
     it "raises an error if bad object_type_id" do
       expect { empty_object_type_id }.to raise_error(/Object Type Not Found/)
     end
@@ -528,24 +525,25 @@ describe Arnoldb::Interface do
       expect { one_empty_object_id }.to raise_error(/Not a valid uuid/)
     end
   end
+end
 
-  describe ".get_objects" do
-    before do
-      @object_type_id = subject.create_object_type("Profiles")
-      @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
-      @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
-      @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
-      @obj_1 = subject.create_object(@object_type_id)
-    end
+describe ".get_objects" do
+  before do
+    @object_type_id = subject.create_object_type("Profiles")
+    @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
+    @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
+    @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
+    @obj_1 = subject.create_object(@object_type_id)
+  end
 
-    let(:value_set1) do
-      [{
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_string,
-        value: "John Kimble"
-      },
-      {
+  let(:value_set1) do
+    [{
+      object_id: @obj_1,
+      object_type_id: @object_type_id,
+      field_id: @field_string,
+      value: "John Kimble"
+    },
+    {
         object_id: @obj_1,
         object_type_id: @object_type_id,
         field_id: @field_integer,
