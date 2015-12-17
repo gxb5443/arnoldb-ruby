@@ -14,7 +14,7 @@ COP = {
 }
 
 describe Arnoldb::Interface do
-  let(:connection) { Arnoldb.connect(ENV['TEST_ARNOLDB_ADDRESS']) }
+  let(:connection) { Arnoldb.connect(ENV["TEST_ARNOLDB_ADDRESS"]) }
   subject { Arnoldb::Interface.new(connection) }
 
   describe "#create_object_type" do
@@ -74,8 +74,12 @@ describe Arnoldb::Interface do
 
     context "when invalid" do
       let(:empty_obj_type) { subject.create_field("", "last", TYPES[:string]) }
-      let(:empty_title) { subject.create_field(@object_type_id, "", TYPES[:string]) }
-      let(:wrong_value_type) { subject.create_field(@object_type_id, "value", 99) }
+      let(:empty_title) do
+        subject.create_field(@object_type_id, "", TYPES[:string])
+      end
+      let(:wrong_value_type) do
+        subject.create_field(@object_type_id, "value", 99)
+      end
 
       it "raises an error for empty object type id" do
         expect { empty_obj_type }.to raise_error(/Not a valid uuid/)
@@ -136,9 +140,21 @@ describe Arnoldb::Interface do
   describe "#create_values" do
     before do
       @object_type_id = subject.create_object_type("Profiles")
-      @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
-      @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
-      @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
+      @field_string = subject.create_field(
+        @object_type_id,
+        "name",
+        TYPES[:string]
+      )
+      @field_integer = subject.create_field(
+        @object_type_id,
+        "age",
+        TYPES[:integer]
+      )
+      @field_float = subject.create_field(
+        @object_type_id,
+        "modifier",
+        TYPES[:float]
+      )
       @object = subject.create_object(@object_type_id)
     end
 
@@ -228,7 +244,7 @@ describe Arnoldb::Interface do
         end
         future_values = subject.create_values(
           values,
-          (Time.now + (3600 * 24 * 365)).to_i
+          (Time.now.utc + (3600 * 24 * 365)).to_i
         )
 
         expect(future_values).to match_array(expected)
@@ -272,7 +288,8 @@ describe Arnoldb::Interface do
       end
 
       it "raises error for object type id" do
-        expect { bad_obj_type_id }.to raise_error(/Field not associated with given Object Type/)
+        expect { bad_obj_type_id }
+          .to raise_error(/Field not associated with given Object Type/)
       end
 
       it "raises error for field id" do
@@ -343,9 +360,21 @@ describe Arnoldb::Interface do
   describe "#get_fields" do
     it "gets fields from arnoldb" do
       object_type_id = subject.create_object_type("Profiles")
-      field_string = subject.create_field(object_type_id, "name", TYPES[:string])
-      field_integer = subject.create_field(object_type_id, "age", TYPES[:integer])
-      field_float = subject.create_field(object_type_id, "modifier", TYPES[:float])
+      field_string = subject.create_field(
+        object_type_id,
+        "name",
+        TYPES[:string]
+      )
+      field_integer = subject.create_field(
+        object_type_id,
+        "age",
+        TYPES[:integer]
+      )
+      field_float = subject.create_field(
+        object_type_id,
+        "modifier",
+        TYPES[:float]
+      )
       fields = [
         { id: field_string, title: "name", value_type: :STRING },
         { id: field_integer, title: "age", value_type: :INT32 },
@@ -366,9 +395,21 @@ describe Arnoldb::Interface do
   describe "#get_values" do
     before do
       @object_type_id = subject.create_object_type("Profiles")
-      @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
-      @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
-      @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
+      @field_string = subject.create_field(
+        @object_type_id,
+        "name",
+        TYPES[:string]
+      )
+      @field_integer = subject.create_field(
+        @object_type_id,
+        "age",
+        TYPES[:integer]
+      )
+      @field_float = subject.create_field(
+        @object_type_id,
+        "modifier",
+        TYPES[:float]
+      )
       @object = subject.create_object(@object_type_id)
       @fields =  [@field_string, @field_integer, @field_float]
       @objects = [@object]
@@ -466,78 +507,90 @@ describe Arnoldb::Interface do
         end
         subject.create_values(
           values,
-          (Time.now + (3600 * 24 * 364)).to_i
+          (Time.now.utc + (3600 * 24 * 364)).to_i
         )
         future_values = subject.get_values(
           @object_type_id,
           @objects,
           @fields,
-          (Time.now + (3600 * 24 * 365)).to_i
+          (Time.now.utc + (3600 * 24 * 365)).to_i
         )
 
         expect(future_values).to match_array(expected)
       end
     end
 
-  context "when invalid" do
-    let(:empty_object_type_id) do
-      subject.get_values(
-        "",
-        @objects,
-        @fields
-      )
-    end
-    let(:empty_object_id) do
-      subject.get_values(
-        @object_type_id,
-        [""],
-        @fields
-      )
-    end
-    let(:empty_field_id) do
-      subject.get_values(
-        @object_type_id,
-        @objects,
-        [""]
-      )
-    end
-    let(:one_empty_object_id) do
-      subject.get_values(
-        @object_type_id,
-        [@object,""],
-        @fields
-      )
-    end
+    context "when invalid" do
+      let(:empty_object_type_id) do
+        subject.get_values(
+          "",
+          @objects,
+          @fields
+        )
+      end
+      let(:empty_object_id) do
+        subject.get_values(
+          @object_type_id,
+          [""],
+          @fields
+        )
+      end
+      let(:empty_field_id) do
+        subject.get_values(
+          @object_type_id,
+          @objects,
+          [""]
+        )
+      end
+      let(:one_empty_object_id) do
+        subject.get_values(
+          @object_type_id,
+          [@object,""],
+          @fields
+        )
+      end
 
-    it "raises an error if bad object_type_id" do
-      expect { empty_object_type_id }.to raise_error(/Object Type Not Found/)
-    end
+      it "raises an error if bad object_type_id" do
+        expect { empty_object_type_id }.to raise_error(/Object Type Not Found/)
+      end
 
-    it "raises an error if bad object_id" do
-      expect { empty_object_id }.to raise_error(/Not a valid uuid/)
-    end
+      it "raises an error if bad object_id" do
+        expect { empty_object_id }.to raise_error(/Not a valid uuid/)
+      end
 
-    it "raises an error if bad field_id" do
-      expect { empty_field_id }.to raise_error(/Field Not Found/)
-    end
+      it "raises an error if bad field_id" do
+        expect { empty_field_id }.to raise_error(/Field Not Found/)
+      end
 
-    it "raises an error if one bad object_id" do
-      expect { one_empty_object_id }.to raise_error(/Not a valid uuid/)
+      it "raises an error if one bad object_id" do
+        expect { one_empty_object_id }.to raise_error(/Not a valid uuid/)
+      end
     end
   end
-end
 
-describe "#get_objects" do
-  before do
-    @object_type_id = subject.create_object_type("Profiles")
-    @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
-    @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
-    @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
-    @obj_1 = subject.create_object(@object_type_id)
-  end
+  describe "#get_objects" do
+    before do
+      @object_type_id = subject.create_object_type("Profiles")
+      @field_string = subject.create_field(
+        @object_type_id,
+        "name",
+        TYPES[:string]
+      )
+      @field_integer = subject.create_field(
+        @object_type_id,
+        "age",
+        TYPES[:integer]
+      )
+      @field_float = subject.create_field(
+        @object_type_id,
+        "modifier",
+        TYPES[:float]
+      )
+      @obj_1 = subject.create_object(@object_type_id)
+    end
 
-      let(:values) do
-        [{
+    let(:values) do
+      [{
         object_id: @obj_1,
         object_type_id: @object_type_id,
         field_id: @field_string,
@@ -555,27 +608,27 @@ describe "#get_objects" do
         field_id: @field_float,
         value: "0.5"
       }]
-      end
-  context "when valid" do
-    it "gets current objects from arnoldb" do
-      subject.create_values(values)
-
-      result_objects = subject.get_objects(
-        @object_type_id,
-        [{
-          field_id: @field_string,
-          value: "John Kimble",
-          operator: COP[:EQ]
-        }]
-      )
-      result_object_ids = []
-      result_objects.each do |object|
-        result_object_ids << object[:id]
-      end
-
-      expect(result_object_ids).to include(@obj_1)
     end
-  end
+    context "when valid" do
+      it "gets current objects from arnoldb" do
+        subject.create_values(values)
+
+        result_objects = subject.get_objects(
+          @object_type_id,
+          [{
+            field_id: @field_string,
+            value: "John Kimble",
+            operator: COP[:EQ]
+          }]
+        )
+        result_object_ids = []
+        result_objects.each do |object|
+          result_object_ids << object[:id]
+        end
+
+        expect(result_object_ids).to include(@obj_1)
+      end
+    end
 
     context "when invalid" do
       let(:bad_operator) do
