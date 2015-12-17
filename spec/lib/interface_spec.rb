@@ -15,11 +15,9 @@ COP = {
 
 describe Arnoldb::Interface do
   let(:connection) { Arnoldb.connect(ENV['TEST_ARNOLDB_ADDRESS']) }
-
   subject { Arnoldb::Interface.new(connection) }
-  describe ".create_object_type" do
-    let(:empty) { subject.create_object_type("") }
 
+  describe "#create_object_type" do
     it "creates an object type in arnoldb" do
       object_type_id = subject.create_object_type("Profiles")
 
@@ -27,48 +25,69 @@ describe Arnoldb::Interface do
       expect(object_type_id).not_to eq("")
     end
 
+    let(:empty) { subject.create_object_type("") }
+
     it "raises an error for empty title" do
       expect { empty }.to raise_error(/Title required/)
     end
   end
 
-  describe ".create_field" do
+  describe "#create_field" do
     before do
       @object_type_id = subject.create_object_type("Profiles")
     end
 
-    let(:string_field) { subject.create_field(@object_type_id, "name", TYPES[:string]) }
-    let(:integer_field) { subject.create_field(@object_type_id, "age", TYPES[:integer]) }
-    let(:float_field) { subject.create_field(@object_type_id, "modifier", TYPES[:float]) }
-    let(:empty_obj_type) { subject.create_field("", "last", TYPES[:string]) }
-    let(:empty_title) { subject.create_field(@object_type_id, "", TYPES[:string]) }
-    let(:wrong_value_type) { subject.create_field(@object_type_id, "value", 99) }
+    context "when correct" do
+      it "creates a string field in arnoldb" do
+        string_field = subject.create_field(
+          @object_type_id,
+          "name",
+          TYPES[:string]
+        )
 
-    it "creates a string field in arnoldb" do
-      expect(string_field).not_to eq(nil)
-      expect(string_field).not_to eq("")
+        expect(string_field).not_to eq(nil)
+        expect(string_field).not_to eq("")
+      end
+
+      it "creates an integer field in arnoldb" do
+        integer_field = subject.create_field(
+          @object_type_id,
+          "age",
+          TYPES[:integer]
+        )
+
+        expect(integer_field).not_to eq(nil)
+        expect(integer_field).not_to eq("")
+      end
+
+      it "creates a float field in arnoldb" do
+        float_field = subject.create_field(
+          @object_type_id,
+          "modifier",
+          TYPES[:float]
+        )
+
+        expect(float_field).not_to eq(nil)
+        expect(float_field).not_to eq("")
+      end
     end
 
-    it "creates an integer field in arnoldb" do
-      expect(integer_field).not_to eq(nil)
-      expect(integer_field).not_to eq("")
-    end
+    context "when incorrect" do
+      let(:empty_obj_type) { subject.create_field("", "last", TYPES[:string]) }
+      let(:empty_title) { subject.create_field(@object_type_id, "", TYPES[:string]) }
+      let(:wrong_value_type) { subject.create_field(@object_type_id, "value", 99) }
 
-    it "creates a float field in arnoldb" do
-      expect(float_field).not_to eq(nil)
-      expect(float_field).not_to eq("")
-    end
+      it "raises an error for empty object type id" do
+        expect { empty_obj_type }.to raise_error(/Not a valid uuid/)
+      end
 
-    it "raises an error for empty object type id" do
-      expect { empty_obj_type }.to raise_error(/Not a valid uuid/)
-    end
+      it "raises an error for empty title" do
+        expect { empty_title }.to raise_error(/Title required/)
+      end
 
-    it "raises an error for empty title" do
-      expect { empty_title }.to raise_error(/Title required/)
-    end
-
-    xit "raises an error for wrong value type" do
-      expect { wrong_value_type }.to raise_error(/Wrong type/)
+      xit "raises an error for wrong value type" do
+        expect { wrong_value_type }.to raise_error(/Wrong type/)
+      end
     end
   end
 
