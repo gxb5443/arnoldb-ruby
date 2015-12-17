@@ -320,24 +320,21 @@ describe Arnoldb::Interface do
     end
   end
 
-  describe ".get_field" do
-    before do
-      @object_type_id = subject.create_object_type("Profiles")
-      @field_string = subject.create_field(
-        @object_type_id,
+  describe "#get_field" do
+    it "gets field from Arnoldb" do
+      object_type_id = subject.create_object_type("Profiles")
+      field_string = subject.create_field(
+        object_type_id,
         "first_name",
         TYPES[:string]
       )
-    end
-
-    it "gets field from Arnoldb" do
       expected = {
-        id: @field_string,
-        object_type_id: @object_type_id,
+        id: field_string,
+        object_type_id: object_type_id,
         title: "first_name",
         value_type: :STRING
       }
-      result = subject.get_field(@field_string)
+      result = subject.get_field(field_string)
 
       expect(result).to match(expected)
     end
