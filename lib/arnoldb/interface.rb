@@ -54,10 +54,10 @@ module Arnoldb
       values_messages = []
       values.each do |value|
         field = Proto::Field.new(id: value[:field_id], object_type_id: value[:object_type_id])
-        values_messages << Proto::Value.new(object_id: value[:object_id], value: value[:value].to_s, field: field)
+        values_messages << Proto::Value.new(object_id: value[:object_id], value: value[:value].to_s, field: field, effective_date: effective_date)
       end
 
-      response = connection.set_values(Proto::Values.new(values: values_messages, date: effective_date))
+      response = connection.set_values(Proto::Values.new(values: values_messages))
       objects = []
       response.values.each do |value|
         objects << { id: value["object_id"], value: value["value"] }

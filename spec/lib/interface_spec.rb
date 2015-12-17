@@ -466,7 +466,7 @@ describe Arnoldb::Interface do
         end
         subject.create_values(
           values,
-          (Time.now + (3600 * 24 * 366)).to_i
+          (Time.now + (3600 * 24 * 364)).to_i
         )
         future_values = subject.get_values(
           @object_type_id,
@@ -527,7 +527,7 @@ describe Arnoldb::Interface do
   end
 end
 
-describe ".get_objects" do
+describe "#get_objects" do
   before do
     @object_type_id = subject.create_object_type("Profiles")
     @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
@@ -536,14 +536,14 @@ describe ".get_objects" do
     @obj_1 = subject.create_object(@object_type_id)
   end
 
-  let(:value_set1) do
-    [{
-      object_id: @obj_1,
-      object_type_id: @object_type_id,
-      field_id: @field_string,
-      value: "John Kimble"
-    },
-    {
+      let(:values) do
+        [{
+        object_id: @obj_1,
+        object_type_id: @object_type_id,
+        field_id: @field_string,
+        value: "John Kimble"
+      },
+      {
         object_id: @obj_1,
         object_type_id: @object_type_id,
         field_id: @field_integer,
@@ -555,86 +555,10 @@ describe ".get_objects" do
         field_id: @field_float,
         value: "0.5"
       }]
-    end
-    let(:value_set2) do
-      [{
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_string,
-        value: "old John Kimble"
-      },
-      {
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_integer,
-        value: "3000"
-      },
-      {
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_float,
-        value: "9.81"
-      }]
-    end
-    let(:value_set3) do
-      [{
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_string,
-        value: "terminator"
-      },
-      {
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_integer,
-        value: "-2000"
-      },
-      {
-        object_id: @obj_1,
-        object_type_id: @object_type_id,
-        field_id: @field_float,
-        value: "3.14"
-      }]
-    end
-    # let(:past_values) do
-    #   subject.create_values(value_set2, Time.new(2010, 10, 10).to_i)
-    # end
-    # let(:future_values) do
-    #   subject.create_values(value_set3, (Time.now + (3600 * 24 * 365)).to_i)
-    # end
-    let(:bad_operator) do
-      subject.get_objects(
-        @object_type_id,
-        [{
-          field_id: @field_string,
-          value: "John Kimble",
-          operator: 99
-        }]
-      )
-    end
-    let(:bad_obj_type_id) do
-      subject.get_objects(
-        "",
-        [{
-          field_id: @field_string,
-          value: "John Kimble",
-          operator: COP[:EQ]
-        }]
-      )
-    end
-    let(:bad_field_id) do
-      subject.get_objects(
-        @object_type_id,
-        [{
-          field_id: "",
-          value: "John Kimble",
-          operator: COP[:EQ]
-        }]
-      )
-    end
-
+      end
+  context "when valid" do
     it "gets current objects from arnoldb" do
-      subject.create_values(value_set1)
+      subject.create_values(values)
 
       result_objects = subject.get_objects(
         @object_type_id,
@@ -651,23 +575,57 @@ describe ".get_objects" do
 
       expect(result_object_ids).to include(@obj_1)
     end
+  end
 
-    it "raises an error with empty object_type_id" do
-      subject.create_values(value_set1)
+    context "when invalid" do
+      let(:bad_operator) do
+        subject.get_objects(
+          @object_type_id,
+          [{
+            field_id: @field_string,
+            value: "John Kimble",
+            operator: 99
+          }]
+        )
+      end
+      let(:bad_obj_type_id) do
+        subject.get_objects(
+          "",
+          [{
+            field_id: @field_string,
+            value: "John Kimble",
+            operator: COP[:EQ]
+          }]
+        )
+      end
+      let(:bad_field_id) do
+        subject.get_objects(
+          @object_type_id,
+          [{
+            field_id: "",
+            value: "John Kimble",
+            operator: COP[:EQ]
+          }]
+        )
+      end
 
-      expect { bad_obj_type_id }.to raise_error(/Not a valid uuid/)
-    end
+      it "raises an error with empty object_type_id" do
+        subject.create_values(values)
 
-    it "raises an error with empty field_id" do
-      subject.create_values(value_set1)
+        expect { bad_obj_type_id }.to raise_error(/Not a valid uuid/)
+      end
 
-      expect { bad_field_id }.to raise_error(/Not a valid uuid/)
-    end
+      it "raises an error with empty field_id" do
+        subject.create_values(values)
 
-    it "raises an error with empty operator" do
-      subject.create_values(value_set1)
+        expect { bad_field_id }.to raise_error(/Not a valid uuid/)
+      end
 
-      expect { bad_operator }.to raise_error(/Not a valid operator/)
+      it "raises an error with empty operator" do
+        subject.create_values(values)
+
+        expect { bad_operator }.to raise_error(/Not a valid operator/)
+      end
     end
   end
 end
