@@ -340,28 +340,23 @@ describe Arnoldb::Interface do
     end
   end
 
-  describe ".get_fields" do
-    before do
-      @object_type_id = subject.create_object_type("Profiles")
-      @field_string = subject.create_field(@object_type_id, "name", TYPES[:string])
-      @field_integer = subject.create_field(@object_type_id, "age", TYPES[:integer])
-      @field_float = subject.create_field(@object_type_id, "modifier", TYPES[:float])
-    end
-
-    let(:fields) do
-      [
-        { id: @field_string, title: "name", value_type: :STRING },
-        { id: @field_integer, title: "age", value_type: :INT32 },
-        { id: @field_float, title: "modifier", value_type: :FLOAT32 }
-      ]
-    end
-    let(:bad_obj_type_id) { subject.get_fields("") }
-
+  describe "#get_fields" do
     it "gets fields from arnoldb" do
-      result = subject.get_fields(@object_type_id)
+      object_type_id = subject.create_object_type("Profiles")
+      field_string = subject.create_field(object_type_id, "name", TYPES[:string])
+      field_integer = subject.create_field(object_type_id, "age", TYPES[:integer])
+      field_float = subject.create_field(object_type_id, "modifier", TYPES[:float])
+      fields = [
+        { id: field_string, title: "name", value_type: :STRING },
+        { id: field_integer, title: "age", value_type: :INT32 },
+        { id: field_float, title: "modifier", value_type: :FLOAT32 }
+      ]
+      result = subject.get_fields(object_type_id)
 
       expect(result).to match_array(fields)
     end
+
+    let(:bad_obj_type_id) { subject.get_fields("") }
 
     it "raises an error if bad object_type_id" do
       expect { bad_obj_type_id }.to raise_error(/Not a valid uuid/)
