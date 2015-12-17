@@ -12,6 +12,7 @@ dependencies:
     - docker login -e="." -u=$DOCKER_USER -p=$DOCKER_PASSWORD registry.namely.tech
     - docker-compose build
     - docker-compose start db_arnoldb
+    - sleep 5
     - docker-compose start arnoldb
 
 test:
