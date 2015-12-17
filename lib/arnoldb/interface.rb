@@ -2,8 +2,6 @@ require 'colorize'
 
 module Arnoldb
   class Interface
-
-
     attr_reader :connection
     def initialize(connection)
       @connection = connection
