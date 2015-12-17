@@ -11,7 +11,9 @@ module Arnoldb
     # @param [String] title the title of the Table to be created
     # @return [String] returns the associated Arnoldb ID for the created Table
     def create_object_type(title)
-      object_type_id = connection.set_object_type(Proto::ObjectType.new(title: title))["id"]
+      object_type_id = connection.set_object_type(
+        Proto::ObjectType.new(title: title)
+      )["id"]
 
       object_type_id
     end
@@ -22,7 +24,13 @@ module Arnoldb
     # @param [String] value_type the data type for the Column
     # @return [String] returns the associated Arnoldb ID for the created Column
     def create_field(object_type_id, title, value_type)
-      field_id = connection.set_field(Proto::Field.new(object_type_id: object_type_id, title: title, value_type: value_type))["id"]
+      field_id = connection.set_field(
+        Proto::Field.new(
+          object_type_id: object_type_id,
+          title: title,
+          value_type: value_type
+        )
+      )["id"]
 
       field_id
     end
@@ -33,7 +41,12 @@ module Arnoldb
     # migrations
     # @return [String] returns the associated Arnoldb ID for the created Object
     def create_object(object_type_id, object_id = "")
-      response = connection.set_object(Proto::Object.new(object_type_id: object_type_id, id: object_id))["id"]
+      response = connection.set_object(
+        Proto::Object.new(
+          object_type_id: object_type_id,
+          id: object_id
+        )
+      )["id"]
 
       response
     end
@@ -53,11 +66,23 @@ module Arnoldb
     def create_values(values, effective_date = 0)
       values_messages = []
       values.each do |value|
-        field = Proto::Field.new(id: value[:field_id], object_type_id: value[:object_type_id])
-        values_messages << Proto::Value.new(object_id: value[:object_id], value: value[:value].to_s, field: field, effective_date: effective_date)
+        field = Proto::Field.new(
+          id: value[:field_id],
+          object_type_id: value[:object_type_id]
+        )
+        values_messages << Proto::Value.new(
+          object_id: value[:object_id],
+          value: value[:value].to_s,
+          field: field,
+          effective_date: effective_date
+        )
       end
 
-      response = connection.set_values(Proto::Values.new(values: values_messages))
+      response = connection.set_values(
+        Proto::Values.new(
+          values: values_messages
+        )
+      )
       objects = []
       response.values.each do |value|
         objects << { id: value["object_id"], value: value["value"] }
@@ -116,9 +141,15 @@ module Arnoldb
     # @option fields [String] :value_type the value type for a Field
     def get_fields(object_type_id)
       fields = []
-      response = connection.get_fields(Proto::ObjectType.new(id: object_type_id))
+      response = connection.get_fields(
+        Proto::ObjectType.new(id: object_type_id)
+      )
       response.fields.each do |field|
-        fields << { id: field.id, title: field.title, value_type: field.value_type }
+        fields << {
+          id: field.id,
+          title: field.title,
+          value_type: field.value_type
+        }
       end
 
       fields
@@ -184,7 +215,11 @@ module Arnoldb
           right = branches.empty? ? leaves.pop : branches.pop
 
         # @todo HARD CODED LOGICAL OPERATOR AS "1" WHICH is AND
-          branch = Proto::Objects::Clause::Branch.new(lop: 1, left: left, right: right)
+          branch = Proto::Objects::Clause::Branch.new(
+            lop: 1,
+            left: left,
+            right: right
+          )
           branch = Proto::Objects::Clause.new(b: branch)
           branches << branch
         end
@@ -202,7 +237,11 @@ module Arnoldb
         clause_messages = []
       end
 
-      objects_query = Proto::Objects.new(object_type_id: object_type_id, clauses: clause_messages, date: date.to_i)
+      objects_query = Proto::Objects.new(
+        object_type_id: object_type_id,
+        clauses: clause_messages,
+        date: date.to_i
+      )
 
       response = connection.get_objects(objects_query)
       objects = []

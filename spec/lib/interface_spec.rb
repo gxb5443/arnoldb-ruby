@@ -158,7 +158,6 @@ describe Arnoldb::Interface do
       @object = subject.create_object(@object_type_id)
     end
 
-
     context "when valid" do
       it "creates current values in arnoldb" do
         expected = []
@@ -325,18 +324,20 @@ describe Arnoldb::Interface do
 
   describe "#get_object_types" do
     it "gets all object types from arnoldb" do
-      object_type_ids = [{
-        id: subject.create_object_type("Profiles"),
-        title: "Profiles"
-      },
-      {
-        id: subject.create_object_type("Reports"),
-        title: "Reports"
-      },
-      {
-        id: subject.create_object_type("Jobs"),
-        title: "Jobs"
-      }]
+      object_type_ids = [
+        {
+          id: subject.create_object_type("Profiles"),
+          title: "Profiles"
+        },
+        {
+          id: subject.create_object_type("Reports"),
+          title: "Reports"
+        },
+        {
+          id: subject.create_object_type("Jobs"),
+          title: "Jobs"
+        }
+      ]
       result = subject.get_all_object_types
 
       expect(result).to include(*object_type_ids)
