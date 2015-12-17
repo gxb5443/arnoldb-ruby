@@ -10,10 +10,9 @@ are derived from the popular
 
 ```
 
-connection = Arnoldb.connection("localhost:2222")
+connection = Arnoldb.connect("localhost:2222")
 
 Arnoldb::Interface.new(connection)
-...
 
 ```
 

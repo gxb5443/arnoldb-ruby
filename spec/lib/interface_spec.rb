@@ -249,6 +249,8 @@ describe Arnoldb::Interface do
         expected << { id: value[:object_id], value: value[:value] }
       end
 
+
+
       expect(past_values).to match_array(expected)
     end
 
@@ -434,14 +436,6 @@ describe Arnoldb::Interface do
     let(:current_values) do
       subject.get_values(@object_type_id, @objects, @fields)
     end
-    let(:past_values) do
-      subject.get_values(
-        @object_type_id,
-        @objects,
-        @fields,
-        Time.new(2012, 10, 10).to_i
-      )
-    end
     let(:future_values) do
       subject.get_values(
         @object_type_id,
@@ -497,6 +491,13 @@ describe Arnoldb::Interface do
       subject.create_values(
         value_set2,
         Time.new(2010, 10, 9).to_i
+      )
+
+      past_values = subject.get_values(
+        @object_type_id,
+        @objects,
+        @fields,
+        Time.new(2012, 10, 10).to_i
       )
 
       expect(past_values).to match_array(expected)
