@@ -1,7 +1,7 @@
 require 'colorize'
 
 module Arnoldb
-  class Interface
+  class Base
     attr_reader :connection
     def initialize(connection)
       @connection = connection
@@ -95,9 +95,14 @@ module Arnoldb
     # @param [String] title the title of the Object Type
     # @return [String, nil] the Arnoldb ID for the Object Type if found
     #
-    # @todo finish ARNOLDB to allow for titles to be sent
-    def get_object_type(title)
-      connection.get_object_type(Proto::ObjectType.new(title: title))[:id]
+    # @todo Should ARNOLDB allow titles to be sent
+    def get_object_type(arnoldb_id)
+      object_type = connection.get_object_type(
+        Proto::ObjectType.new(id: arnoldb_id)
+      )
+      object_type = { id: object_type.id, title: object_type.title }
+
+      object_type
     end
 
     # Gets the Arnoldb IDs for all of the Object Types in Arnoldb

@@ -13,9 +13,9 @@ COP = {
   EQ: 3
 }
 
-describe Arnoldb::Interface do
+describe Arnoldb::Base do
   let(:connection) { Arnoldb.connect(ENV["TEST_ARNOLDB_ADDRESS"]) }
-  subject { Arnoldb::Interface.new(connection) }
+  subject { Arnoldb::Base.new(connection) }
 
   describe "#create_object_type" do
     it "creates an object type in arnoldb" do
@@ -109,12 +109,13 @@ describe Arnoldb::Interface do
       end
 
       it "creates an object in arnoldb with matching id" do
+        random_uuid = SecureRandom.uuid
         object_with_id = subject.create_object(
           @object_type_id,
-          "b6785476-146d-43a4-a217-23e186ee7fd3"
+          random_uuid
         )
 
-        expect(object_with_id).to eq("b6785476-146d-43a4-a217-23e186ee7fd3")
+        expect(object_with_id).to eq(random_uuid)
       end
     end
 
@@ -307,6 +308,12 @@ describe Arnoldb::Interface do
   describe "#get_object_type" do
     before do
       @object_type_id = subject.create_object_type("Profiles")
+    end
+
+    it "gets an object type from arnoldb" do
+      result = subject.get_object_type(@object_type_id)
+
+      expect(result).to eq(id: @object_type_id, title: "Profiles")
     end
 
     xit "gets an object type from arnoldb" do
