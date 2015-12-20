@@ -1,5 +1,3 @@
-require 'colorize'
-
 module Arnoldb
   class Base
     attr_reader :connection
