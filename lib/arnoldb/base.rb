@@ -201,6 +201,8 @@ module Arnoldb
     # @param [DateTime] date the date for what version of the Objects being
     # queried
     # @return [Array<Hash>] Objects which satisfy the clauses
+    #
+    # @todo THIS NEEDS TO BE UPDATED TO HANDLE ORs
     def get_objects(object_type_id, clauses, date = 0)
       if clauses.count > 1
         leaves = []
