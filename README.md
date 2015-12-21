@@ -1,3 +1,10 @@
+[![Inline
+docs](http://inch-ci.org/github/namely/arnoldb-ruby.svg)](http://inch-ci.org/github/namely/arnoldb-ruby)
+
+<p align="center">
+<img
+src="https://raw.githubusercontent.com/namely/arnoldb-ruby/master/static/arnoldb-horizontal.png" alt="ArnolDB Logo" />
+</p>
 # Arnoldb
 
 This gem provides a way to easily map the functionality of an Arnoldb database to
