@@ -19,7 +19,7 @@ Arnoldb::Base.new(connection)
 
 ### Endpoints
 
-For available endpoints view the documentation.
+For available endpoints view the [documentation](http://www.rubydoc.info/github/namely/arnoldb-ruby/master).
 
 ## Installation
 
