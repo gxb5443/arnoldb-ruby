@@ -1,5 +1,5 @@
 ![Build
-Status](https://circleci.com/gh/namely/arnoldb-ruby.svg?style=shield&circle-token=6a9569b014658ce403e1a1ab505f04f94aae580f)
+Status](https://circleci.com/gh/namely/arnoldb-ruby.svg?style=shield&circle-token=31fe0b54ce2350d02823c637cdaa316d037cdc56)
 [![Inline
 docs](http://inch-ci.org/github/namely/arnoldb-ruby.svg)](http://inch-ci.org/github/namely/arnoldb-ruby)
 
