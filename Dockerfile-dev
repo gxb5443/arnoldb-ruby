@@ -8,5 +8,12 @@ COPY Gemfile /arnoldb_gem/
 COPY Gemfile.lock /arnoldb_gem/
 COPY arnoldb.gemspec /arnoldb_gem/
 
+# Copy CA certificate and server credentials:
+COPY keys/client.crt /arnoldb_gem/keys/
+COPY keys/client.key /arnoldb_gem/keys/
+COPY keys/server.crt /arnoldb_gem/keys/
+
+WORKDIR /arnoldb_gem
+
 RUN bundle install
 
