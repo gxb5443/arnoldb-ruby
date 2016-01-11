@@ -7,11 +7,11 @@ module Arnoldb
   autoload :Base, "arnoldb/base.rb"
 
   def self.connect(arnoldb_address)
-    if ENV['ARNOLDB_TLS'] == 'ENABLE'
+    if ENV["ARNOLDB_TLS"] == "ENABLE"
       credentials = GRPC::Core::Credentials.new(
-        File.read('./keys/server.crt'),
-        File.read('./keys/client.key'),
-        File.read('./keys/client.crt')
+        File.read("./keys/server.crt"),
+        File.read("./keys/client.key"),
+        File.read("./keys/client.crt")
       )
 
       Proto::DatastoreActions::Stub.new(arnoldb_address, creds: credentials)
