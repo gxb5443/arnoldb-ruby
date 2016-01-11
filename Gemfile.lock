@@ -55,7 +55,7 @@ PLATFORMS
 DEPENDENCIES
   arnoldb!
   bundler (~> 1.7)
-  rspec
+  rspec (~> 3.4)
 
 BUNDLED WITH
    1.10.6
