@@ -1,9 +1,10 @@
 require "./spec/spec_helper.rb"
 
 TYPES = {
-  integer: 0,
-  float: 1,
-  string: 2,
+  invalid: 0,
+  integer: 1,
+  float: 2,
+  string: 3,
 }
 
 COP = {
@@ -290,7 +291,7 @@ describe Arnoldb::Base do
       end
 
       it "raises error for object id" do
-        expect { bad_obj_id }.to raise_error(/Object Id Not Found/)
+        expect { bad_obj_id }.to raise_error(/Not a valid uuid/)
       end
 
       it "raises error for object type id" do
@@ -571,7 +572,7 @@ describe Arnoldb::Base do
       end
 
       it "raises an error if bad object_type_id" do
-        expect { empty_object_type_id }.to raise_error(/Object Type Not Found/)
+        expect { empty_object_type_id }.to raise_error(/Not a valid uuid/)
       end
 
       it "raises an error if bad object_id" do
@@ -579,7 +580,7 @@ describe Arnoldb::Base do
       end
 
       it "raises an error if bad field_id" do
-        expect { empty_field_id }.to raise_error(/Field Not Found/)
+        expect { empty_field_id }.to raise_error(/Not a valid uuid/)
       end
 
       it "raises an error if one bad object_id" do
