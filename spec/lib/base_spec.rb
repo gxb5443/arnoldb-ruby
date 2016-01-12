@@ -290,7 +290,6 @@ describe Arnoldb::Base do
         )
       end
 
-      #TODO
       it "raises error for object id" do
         expect { bad_obj_id }.to raise_error(/Not a valid uuid/)
       end
