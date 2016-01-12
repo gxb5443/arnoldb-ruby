@@ -4,7 +4,8 @@ db_arnoldb:
     POSTGRES_DB: arnold
 
 arnoldb:
-  image: registry.namely.tech/namely/arnoldb:27f36d12
+  image: registry.namely.tech/namely/arnoldb:b49510a9
+  command: --migrate-up
   ports:
     - "8080"
   environment:
