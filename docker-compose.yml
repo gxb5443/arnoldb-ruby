@@ -5,6 +5,7 @@ db_arnoldb:
 
 arnoldb:
   image: registry.namely.tech/namely/arnoldb:27f36d12
+  command: --migrate-up
   ports:
     - "8080"
   environment:
