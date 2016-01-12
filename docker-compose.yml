@@ -1,10 +1,13 @@
 db_arnoldb:
   image: postgres:9.4
+  ports:
+    - "5432:5432"
   environment:
     POSTGRES_DB: arnold
 
 arnoldb:
-  image: registry.namely.tech/namely/arnoldb:27f36d12
+  image: registry.namely.tech/namely/arnoldb:b49510a9
+  command: --migrate-up
   ports:
     - "8080"
   environment:
